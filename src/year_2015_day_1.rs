@@ -1,28 +1,42 @@
 use std::fs;
 
-fn sum_floors(contents: &str) -> i32 {
-    contents.chars().fold(0, |mut count, char| {
-        match char {
-            '(' => count += 1,
-            ')' => count -= 1,
-            _ => (),
-        }
-        count
-    })
+struct House {
+    floor_number: i32,
+    move_count: i32,
 }
 
-fn floor_position(contents: &str, floor: i32) -> Option<usize> {
-    contents.chars()
-        .scan(0, |count, char| {
-            match char {
-                '(' => *count += 1,
-                ')' => *count -= 1,
-                _ => (),
+impl House {
+
+    fn new() -> House {
+        House {
+            floor_number: 0,
+            move_count: 0,
+        }
+    }
+
+    fn move_floor(&mut self, direction: char) {
+        match direction {
+            '(' => self.floor_number += 1,
+            ')' => self.floor_number -= 1,
+            _ => (),
+        };
+        self.move_count += 1;
+    }
+
+    fn calculate_destination_floor(&mut self, directions: &str) -> i32 {
+        directions.chars().for_each(|char| self.move_floor(char));
+        self.floor_number
+    }
+
+    fn calculate_moves_to_floor(&mut self, directions: &str, floor: i32) -> i32 {
+        for c in directions.chars() {
+            self.move_floor(c);
+            if self.floor_number == floor {
+                break;
             }
-            Some(*count)
-        })
-        .position(|x| x == floor)
-        .and_then(|x| Some(x + 1))
+        }
+        self.move_count
+    }
 }
 
 #[test]
@@ -31,12 +45,13 @@ fn test_2015_day_1() {
     let contents = fs::read_to_string("input/2015/day-1.txt")
         .expect("Failed to read file to String");
 
-    let floor_sum = sum_floors(&contents);
-    assert_eq!(floor_sum, 280);
-    println!("The instructions take Santa to floor {}.", floor_sum);
+    let mut house = House::new();
+    let destination_floor = house.calculate_destination_floor(&contents);
+    assert_eq!(destination_floor, 280);
+    println!("The instructions take Santa to floor {}.", destination_floor);
 
-    let first_basement_position = floor_position(&contents, -1)
-        .expect("Never reaches basement");
+    house = House::new();
+    let first_basement_position = house.calculate_moves_to_floor(&contents, -1);
 
     assert_eq!(first_basement_position, 1797);
     println!("The first position on floor -1 is {}.", first_basement_position);
