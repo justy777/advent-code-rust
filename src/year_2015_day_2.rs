@@ -1,7 +1,6 @@
 use std::{cmp, fs};
 use std::str::FromStr;
 use std::num::ParseIntError;
-use std::convert::TryFrom;
 
 struct Present {
     length: i32,
@@ -15,15 +14,17 @@ impl Present {
         let area_1 = self.length * self.width;
         let area_2 = self.width * self.height;
         let area_3 = self.height * self.length;
+
         let min_area = cmp::min(area_1, cmp::min(area_2, area_3));
+
         (2 * (area_1 + area_2 + area_3)) + min_area
     }
-
 
     fn calculate_ribbon_needed(&self) -> i32 {
         let needed_for_bow = self.length * self.width * self.height;
         let max = cmp::max(self.length, cmp::max(self.width, self.height));
         let smallest_perimeter = 2 * (self.length + self.width + self.height - max);
+
         smallest_perimeter + needed_for_bow
     }
 }
@@ -33,19 +34,6 @@ impl FromStr for Present {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let dimensions: Vec<&str> = s.split('x').collect();
-        let length = dimensions[0].parse::<i32>()?;
-        let width = dimensions[1].parse::<i32>()?;
-        let height = dimensions[2].parse::<i32>()?;
-
-        Ok(Present {length, width, height})
-    }
-}
-
-impl TryFrom<&str> for Present {
-    type Error = ParseIntError;
-
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        let dimensions: Vec<&str> = value.split('x').collect();
         let length = dimensions[0].parse::<i32>()?;
         let width = dimensions[1].parse::<i32>()?;
         let height = dimensions[2].parse::<i32>()?;
