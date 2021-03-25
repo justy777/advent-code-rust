@@ -49,4 +49,5 @@ fn test_2015_day_4() {
 
     let second_half_of_key = find_md5_hash_leading_zeroes(contents.as_bytes(), 6).unwrap();
     println!("The secret key is {}, and the answer is {} for an MD5 hash with six leading zeroes.", contents, second_half_of_key);
+    assert_eq!(second_half_of_key, 9958218);
 }
