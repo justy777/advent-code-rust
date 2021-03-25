@@ -24,7 +24,7 @@ impl House {
     }
 
     fn calculate_destination_floor(&mut self, directions: &str) -> i32 {
-        directions.chars().for_each(|char| self.move_floor(char));
+        directions.chars().for_each(|c| self.move_floor(c));
         self.floor_number
     }
 

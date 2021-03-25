@@ -59,9 +59,7 @@ fn test_2015_day_3() {
 
     let mut grid = Grid::new(1);
 
-    contents.chars().for_each(|c| {
-        grid.move_houses(c);
-    });
+    contents.chars().for_each(|c| grid.move_houses(c));
 
     let houses_visited = grid.past_positions.len();
     println!("Santa visited {} houses at least once.", houses_visited);
@@ -69,9 +67,7 @@ fn test_2015_day_3() {
 
     let mut grid = Grid::new(2);
 
-    contents.chars().for_each(|c| {
-        grid.move_houses(c);
-    });
+    contents.chars().for_each(|c| grid.move_houses(c));
 
     let houses_visited = grid.past_positions.len();
     println!("Santa and Robo-Santa visited {} houses at least once.", houses_visited);
