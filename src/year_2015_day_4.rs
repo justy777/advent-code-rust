@@ -17,12 +17,12 @@ fn find_md5_hash_leading_zeroes(key: &[u8], leading_zeroes: u64) -> Option<u64> 
 
         let mut counter = leading_zeroes;
         let mut first_bytes = 0;
-        for i in 0..leading_bytes as usize {
+        for byte in output.iter().take(leading_bytes as usize) {
             if counter >= 2 {
-                first_bytes += output[i] as u64;
+                first_bytes += *byte as u64;
                 counter -= 2;
             } else {
-                first_bytes += (output[i] >> 4) as u64;
+                first_bytes += (*byte >> 4) as u64;
                 counter -= 1;
             }
         }

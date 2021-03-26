@@ -12,9 +12,10 @@ fn contains_double_letter(s: &str) -> bool {
         return false;
     }
 
-    let mut last_char = s.chars().nth(0).unwrap();
+    let mut iter = s.chars();
+    let mut last_char = iter.next().unwrap();
     let mut found = false;
-    for c in s[1..].chars() {
+    for c in iter {
         if last_char == c {
             found = true;
             break;
