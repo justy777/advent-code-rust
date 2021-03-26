@@ -47,7 +47,7 @@ impl FromStr for Present {
 fn test_2015_day_2() {
     println!("Advent of Code 2015 - Day 2");
     let contents = fs::read_to_string("input/2015/day-2.txt")
-        .expect("Failed to read file to String");
+        .expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents.lines()
         .map(|line| Present::from_str(line).unwrap())

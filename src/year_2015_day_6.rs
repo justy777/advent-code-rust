@@ -116,7 +116,7 @@ impl LightGrid {
 fn test_2015_day_6() {
     println!("Advent of Code 2015 - Day 6");
     let contents = fs::read_to_string("input/2015/day-6.txt")
-        .expect("Failed to read file to String");
+        .expect("Failed to read file to string.");
 
     let mut grid = LightGrid::new();
     contents.lines().for_each(|line| grid.follow_instruction(line));

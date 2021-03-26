@@ -77,7 +77,7 @@ fn is_nice_word2(s: &str) -> bool {
 fn test_2015_day_5() {
     println!("Advent of Code 2015 - Day 5");
     let contents = fs::read_to_string("input/2015/day-5.txt")
-        .expect("Failed to read file to String");
+        .expect("Failed to read file to string.");
 
     let nice_word_count = contents.lines().filter(|line| is_nice_word(line)).count();
     println!("There are {} nice words with the first set of rules.", nice_word_count);

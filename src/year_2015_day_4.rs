@@ -41,7 +41,7 @@ fn find_md5_hash_leading_zeroes(key: &[u8], leading_zeroes: u64) -> Option<u64> 
 fn test_2015_day_4() {
     println!("Advent of Code 2015 - Day 4");
     let contents = fs::read_to_string("input/2015/day-4.txt")
-        .expect("Failed to read file to String");
+        .expect("Failed to read file to string.");
 
     let second_half_of_key = find_md5_hash_leading_zeroes(contents.as_bytes(), 5).unwrap();
     println!("The secret key is {}, and the answer is {} for an MD5 hash with five leading zeroes.", contents, second_half_of_key);

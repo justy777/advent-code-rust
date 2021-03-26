@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::fs;
 
-#[derive(Hash, Eq, PartialEq, Debug, Copy, Clone)]
+#[derive(Hash, Eq, PartialEq, Copy, Clone)]
 struct Cell {
     x: i32,
     y: i32,
@@ -42,10 +42,10 @@ impl Grid {
 
     fn move_houses(&mut self, direction: char) {
         let position = self.current_positions[self.turn];
-        let new_position = &position.move_cell(direction).unwrap();
+        let new_position = position.move_cell(direction).unwrap();
 
-        self.past_positions.insert(*new_position);
-        self.current_positions[self.turn] = *new_position;
+        self.past_positions.insert(new_position);
+        self.current_positions[self.turn] = new_position;
 
         self.turn = (self.turn + 1) % self.current_positions.len();
     }
@@ -55,7 +55,7 @@ impl Grid {
 fn test_2015_day_3() {
     println!("Advent of Code 2015 - Day 3");
     let contents = fs::read_to_string("input/2015/day-3.txt")
-        .expect("Failed to read file to String");
+        .expect("Failed to read file to string.");
 
     let mut grid = Grid::new(1);
 
