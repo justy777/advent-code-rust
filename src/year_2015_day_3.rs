@@ -14,10 +14,22 @@ impl Cell {
 
     fn move_cell(&self, direction: char) -> Option<Cell> {
         match direction {
-            '^' => Some(Cell { x: self.x, y: self.y + 1 }),
-            'v' => Some(Cell { x: self.x, y: self.y - 1 }),
-            '>' => Some(Cell { x: self.x + 1, y: self.y }),
-            '<' => Some(Cell { x: self.x - 1, y: self.y }),
+            '^' => Some(Cell {
+                x: self.x,
+                y: self.y + 1,
+            }),
+            'v' => Some(Cell {
+                x: self.x,
+                y: self.y - 1,
+            }),
+            '>' => Some(Cell {
+                x: self.x + 1,
+                y: self.y,
+            }),
+            '<' => Some(Cell {
+                x: self.x - 1,
+                y: self.y,
+            }),
             _ => None,
         }
     }
@@ -54,8 +66,8 @@ impl Grid {
 #[test]
 fn test_2015_day_3() {
     println!("Advent of Code 2015 - Day 3");
-    let contents = fs::read_to_string("input/2015/day-3.txt")
-        .expect("Failed to read file to string.");
+    let contents =
+        fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
 
     let mut grid = Grid::new(1);
 
@@ -70,6 +82,9 @@ fn test_2015_day_3() {
     contents.chars().for_each(|c| grid.move_houses(c));
 
     let houses_visited = grid.past_positions.len();
-    println!("Santa and Robo-Santa visited {} houses at least once.", houses_visited);
+    println!(
+        "Santa and Robo-Santa visited {} houses at least once.",
+        houses_visited
+    );
     assert_eq!(houses_visited, 2341);
 }

@@ -15,7 +15,7 @@ impl FromStr for Point {
         let x = s.next().unwrap().parse::<usize>()?;
         let y = s.next().unwrap().parse::<usize>()?;
 
-        Ok(Point {x, y})
+        Ok(Point { x, y })
     }
 }
 
@@ -25,7 +25,6 @@ enum Operation {
     TurnOff,
 }
 
-
 #[derive(Copy, Clone)]
 struct Bulb {
     state: bool,
@@ -33,9 +32,7 @@ struct Bulb {
 
 impl Bulb {
     fn new() -> Bulb {
-        Bulb {
-            state: false,
-        }
+        Bulb { state: false }
     }
 
     fn toggle(&mut self) {
@@ -51,7 +48,11 @@ impl Bulb {
     }
 
     fn brightness(&self) -> i32 {
-        if self.state {1} else {0}
+        if self.state {
+            1
+        } else {
+            0
+        }
     }
 }
 
@@ -82,11 +83,10 @@ impl LightGrid {
                 match operation {
                     Operation::Toggle => self.lights[x][y].toggle(),
                     Operation::TurnOn => self.lights[x][y].turn_on(),
-                    Operation::TurnOff=> self.lights[x][y].turn_off(),
+                    Operation::TurnOff => self.lights[x][y].turn_off(),
                 }
             }
         }
-
     }
 
     fn follow_instruction(&mut self, instruction: &str) {
@@ -111,15 +111,16 @@ impl LightGrid {
     }
 }
 
-
 #[test]
 fn test_2015_day_6() {
     println!("Advent of Code 2015 - Day 6");
-    let contents = fs::read_to_string("input/2015/day-6.txt")
-        .expect("Failed to read file to string.");
+    let contents =
+        fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
     let mut grid = LightGrid::new();
-    contents.lines().for_each(|line| grid.follow_instruction(line));
+    contents
+        .lines()
+        .for_each(|line| grid.follow_instruction(line));
     let lit_lights_count = grid.count_lit_lights();
     println!("There are {} lights lit.", lit_lights_count);
     assert_eq!(lit_lights_count, 543903);

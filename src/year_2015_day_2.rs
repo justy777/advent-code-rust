@@ -1,6 +1,6 @@
-use std::{cmp, fs};
-use std::str::FromStr;
 use std::num::ParseIntError;
+use std::str::FromStr;
+use std::{cmp, fs};
 
 struct Present {
     length: i32,
@@ -9,7 +9,6 @@ struct Present {
 }
 
 impl Present {
-
     fn calculate_wrapping_paper_needed(&self) -> i32 {
         let area_1 = self.length * self.width;
         let area_2 = self.width * self.height;
@@ -38,29 +37,38 @@ impl FromStr for Present {
         let width = dimensions[1].parse::<i32>()?;
         let height = dimensions[2].parse::<i32>()?;
 
-        Ok(Present {length, width, height})
+        Ok(Present {
+            length,
+            width,
+            height,
+        })
     }
 }
-
 
 #[test]
 fn test_2015_day_2() {
     println!("Advent of Code 2015 - Day 2");
-    let contents = fs::read_to_string("input/2015/day-2.txt")
-        .expect("Failed to read file to string.");
+    let contents =
+        fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
 
-    let presents: Vec<Present> = contents.lines()
+    let presents: Vec<Present> = contents
+        .lines()
         .map(|line| Present::from_str(line).unwrap())
         .collect();
 
-    let wrapping_paper_needed: i32 = presents.iter()
+    let wrapping_paper_needed: i32 = presents
+        .iter()
         .map(|present| present.calculate_wrapping_paper_needed())
         .sum();
 
-    println!("The elves need {} feet of wrapping paper.", wrapping_paper_needed);
+    println!(
+        "The elves need {} feet of wrapping paper.",
+        wrapping_paper_needed
+    );
     assert_eq!(wrapping_paper_needed, 1586300);
 
-    let ribbon_needed: i32 = presents.iter()
+    let ribbon_needed: i32 = presents
+        .iter()
         .map(|present| present.calculate_ribbon_needed())
         .sum();
 

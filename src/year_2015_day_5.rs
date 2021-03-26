@@ -47,7 +47,7 @@ fn contains_pair_of_letters_twice(s: &str) -> bool {
     let mut found = false;
     for i in 1..(s.len() - 2) {
         for j in (i + 1)..(s.len() - 1) {
-            if s[(i - 1)..=i] == s[j..=(j+1)] {
+            if s[(i - 1)..=i] == s[j..=(j + 1)] {
                 found = true;
                 break;
             }
@@ -77,14 +77,20 @@ fn is_nice_word2(s: &str) -> bool {
 #[test]
 fn test_2015_day_5() {
     println!("Advent of Code 2015 - Day 5");
-    let contents = fs::read_to_string("input/2015/day-5.txt")
-        .expect("Failed to read file to string.");
+    let contents =
+        fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
 
     let nice_word_count = contents.lines().filter(|line| is_nice_word(line)).count();
-    println!("There are {} nice words with the first set of rules.", nice_word_count);
+    println!(
+        "There are {} nice words with the first set of rules.",
+        nice_word_count
+    );
     assert_eq!(nice_word_count, 236);
 
     let nice_word_count = contents.lines().filter(|line| is_nice_word2(line)).count();
-    println!("There are {} nice words with the second set of rules.", nice_word_count);
+    println!(
+        "There are {} nice words with the second set of rules.",
+        nice_word_count
+    );
     assert_eq!(nice_word_count, 51);
 }
