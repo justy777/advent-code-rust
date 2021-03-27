@@ -2,31 +2,31 @@ use std::collections::HashSet;
 use std::fs;
 
 #[derive(Hash, Eq, PartialEq, Copy, Clone)]
-struct Cell {
+struct Point {
     x: i32,
     y: i32,
 }
 
-impl Cell {
-    fn new() -> Cell {
-        Cell { x: 0, y: 0 }
+impl Point {
+    fn new() -> Point {
+        Point { x: 0, y: 0 }
     }
 
-    fn move_cell(&self, direction: char) -> Option<Cell> {
+    fn move_cell(&self, direction: char) -> Option<Point> {
         match direction {
-            '^' => Some(Cell {
+            '^' => Some(Point {
                 x: self.x,
                 y: self.y + 1,
             }),
-            'v' => Some(Cell {
+            'v' => Some(Point {
                 x: self.x,
                 y: self.y - 1,
             }),
-            '>' => Some(Cell {
+            '>' => Some(Point {
                 x: self.x + 1,
                 y: self.y,
             }),
-            '<' => Some(Cell {
+            '<' => Some(Point {
                 x: self.x - 1,
                 y: self.y,
             }),
@@ -36,17 +36,17 @@ impl Cell {
 }
 
 struct Grid {
-    current_positions: Vec<Cell>,
-    past_positions: HashSet<Cell>,
+    current_positions: Vec<Point>,
+    past_positions: HashSet<Point>,
     turn: usize,
 }
 
 impl Grid {
     fn new(size: usize) -> Grid {
         let mut past_positions = HashSet::new();
-        past_positions.insert(Cell::new());
+        past_positions.insert(Point::new());
         Grid {
-            current_positions: vec![Cell::new(); size],
+            current_positions: vec![Point::new(); size],
             past_positions,
             turn: 0,
         }
