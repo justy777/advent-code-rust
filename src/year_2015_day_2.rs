@@ -31,7 +31,7 @@ impl Present {
 impl FromStr for Present {
     type Err = ParseIntError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Present, ParseIntError> {
         let dimensions: Vec<&str> = s.split('x').collect();
         let length = dimensions[0].parse::<i32>()?;
         let width = dimensions[1].parse::<i32>()?;

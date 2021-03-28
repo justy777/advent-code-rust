@@ -10,7 +10,7 @@ struct Point {
 impl FromStr for Point {
     type Err = ParseIntError;
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
+    fn from_str(s: &str) -> Result<Point, ParseIntError> {
         let mut s = s.split(',');
         let x = s.next().unwrap().parse::<usize>()?;
         let y = s.next().unwrap().parse::<usize>()?;
@@ -25,16 +25,28 @@ enum Operation {
     TurnOff,
 }
 
-#[derive(Copy, Clone)]
-struct Bulb {
+trait State {
+    fn toggle(&mut self);
+
+    fn turn_on(&mut self);
+
+    fn turn_off(&mut self);
+
+    fn brightness(&self) -> i32;
+}
+
+#[derive(Clone)]
+struct SimpleBulb {
     state: bool,
 }
 
-impl Bulb {
-    fn new() -> Bulb {
-        Bulb { state: false }
+impl SimpleBulb {
+    fn new() -> SimpleBulb {
+        SimpleBulb { state: false }
     }
+}
 
+impl State for SimpleBulb {
     fn toggle(&mut self) {
         self.state = !self.state;
     }
@@ -56,21 +68,54 @@ impl Bulb {
     }
 }
 
-struct LightGrid {
-    lights: [[Bulb; 1000]; 1000],
+#[derive(Clone)]
+struct DimmableBulb {
+    state: i32,
 }
 
-impl LightGrid {
-    fn new() -> LightGrid {
-        LightGrid {
-            lights: [[Bulb::new(); 1000]; 1000],
+impl DimmableBulb {
+    fn new() -> DimmableBulb {
+        DimmableBulb { state: 0 }
+    }
+}
+
+impl State for DimmableBulb {
+    fn toggle(&mut self) {
+        self.state += 2;
+    }
+
+    fn turn_on(&mut self) {
+        self.state += 1;
+    }
+
+    fn turn_off(&mut self) {
+        if self.state != 0 {
+            self.state -= 1;
         }
     }
 
-    fn count_lit_lights(&self) -> i32 {
+    fn brightness(&self) -> i32 {
+        self.state
+    }
+}
+
+struct LightGrid<T: State> {
+    lights: Vec<Vec<T>>,
+}
+
+const GRID_CAPACITY: usize = 1000;
+
+impl<T: State + Clone> LightGrid<T> {
+    fn new(bulb: T) -> LightGrid<T> {
+        LightGrid {
+            lights: vec![vec![bulb; GRID_CAPACITY]; GRID_CAPACITY],
+        }
+    }
+
+    fn total_brightness(&self) -> i32 {
         let mut count = 0;
-        for x in 0..1000 {
-            for y in 0..1000 {
+        for x in 0..GRID_CAPACITY {
+            for y in 0..GRID_CAPACITY {
                 count += self.lights[x][y].brightness();
             }
         }
@@ -117,11 +162,19 @@ fn test_2015_day_6() {
     let contents =
         fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
-    let mut grid = LightGrid::new();
+    let mut grid = LightGrid::new(SimpleBulb::new());
     contents
         .lines()
         .for_each(|line| grid.follow_instruction(line));
-    let lit_lights_count = grid.count_lit_lights();
+    let lit_lights_count = grid.total_brightness();
     println!("There are {} lights lit.", lit_lights_count);
     assert_eq!(lit_lights_count, 543903);
+
+    let mut grid = LightGrid::new(DimmableBulb::new());
+    contents
+        .lines()
+        .for_each(|line| grid.follow_instruction(line));
+    let total_brightness = grid.total_brightness();
+    println!("The total brightness is {}.", total_brightness);
+    assert_eq!(total_brightness, 14687245);
 }
