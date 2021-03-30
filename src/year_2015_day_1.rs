@@ -21,21 +21,23 @@ impl House {
         };
         self.move_count += 1;
     }
+}
 
-    fn calculate_destination_floor(&mut self, directions: &str) -> i32 {
-        directions.chars().for_each(|c| self.move_floor(c));
-        self.floor_number
-    }
+fn calculate_destination_floor(directions: &str) -> i32 {
+    let mut house = House::new();
+    directions.chars().for_each(|c| house.move_floor(c));
+    house.floor_number
+}
 
-    fn calculate_moves_to_floor(&mut self, directions: &str, floor: i32) -> i32 {
-        for c in directions.chars() {
-            self.move_floor(c);
-            if self.floor_number == floor {
-                break;
-            }
+fn calculate_moves_to_floor(directions: &str, floor: i32) -> i32 {
+    let mut house = House::new();
+    for c in directions.chars() {
+        house.move_floor(c);
+        if house.floor_number == floor {
+            break;
         }
-        self.move_count
     }
+    house.move_count
 }
 
 #[test]
@@ -44,14 +46,14 @@ fn test_2015_day_1() {
     let contents =
         fs::read_to_string("input/2015/day-1.txt").expect("Failed to read file to string.");
 
-    let destination_floor = House::new().calculate_destination_floor(&contents);
+    let destination_floor = calculate_destination_floor(&contents);
     assert_eq!(destination_floor, 280);
     println!(
         "The instructions take Santa to floor {}.",
         destination_floor
     );
 
-    let first_basement_position = House::new().calculate_moves_to_floor(&contents, -1);
+    let first_basement_position = calculate_moves_to_floor(&contents, -1);
 
     assert_eq!(first_basement_position, 1797);
     println!(

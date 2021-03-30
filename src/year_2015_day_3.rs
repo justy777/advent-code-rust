@@ -42,11 +42,11 @@ struct Grid {
 }
 
 impl Grid {
-    fn new(size: usize) -> Grid {
+    fn new(parallel: usize) -> Grid {
         let mut past_positions = HashSet::new();
         past_positions.insert(Point::new());
         Grid {
-            current_positions: vec![Point::new(); size],
+            current_positions: vec![Point::new(); parallel],
             past_positions,
             turn: 0,
         }
