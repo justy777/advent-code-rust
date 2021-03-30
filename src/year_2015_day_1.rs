@@ -1,43 +1,82 @@
 use std::fs;
 
-struct House {
-    floor_number: i32,
-    move_count: i32,
+struct Counter {
+    count: i32,
+    moves: i32,
 }
 
-impl House {
-    fn new() -> House {
-        House {
-            floor_number: 0,
-            move_count: 0,
+impl Counter {
+    fn new() -> Counter {
+        Counter {
+            count: 0,
+            moves: 0,
         }
     }
 
-    fn move_floor(&mut self, direction: char) {
+    fn move_count(&mut self, direction: char) {
         match direction {
-            '(' => self.floor_number += 1,
-            ')' => self.floor_number -= 1,
+            '(' => self.count += 1,
+            ')' => self.count -= 1,
             _ => (),
         };
-        self.move_count += 1;
+        self.moves += 1;
     }
 }
 
-fn calculate_destination_floor(directions: &str) -> i32 {
-    let mut house = House::new();
-    directions.chars().for_each(|c| house.move_floor(c));
-    house.floor_number
+pub fn calculate_final_count(directions: &str) -> i32 {
+    let mut counter = Counter::new();
+    directions.chars().for_each(|c| counter.move_count(c));
+    counter.count
 }
 
-fn calculate_moves_to_floor(directions: &str, floor: i32) -> i32 {
-    let mut house = House::new();
+pub fn calculate_moves_to_value(directions: &str, stop_value: i32) -> i32 {
+    let mut counter = Counter::new();
     for c in directions.chars() {
-        house.move_floor(c);
-        if house.floor_number == floor {
+        counter.move_count(c);
+        if counter.count == stop_value {
             break;
         }
     }
-    house.move_count
+    counter.moves
+}
+
+#[test]
+fn test_calculate_final_count() {
+    let value = calculate_final_count("(())");
+    assert_eq!(value, 0);
+
+    let value = calculate_final_count("()()");
+    assert_eq!(value, 0);
+
+    let value = calculate_final_count("(((");
+    assert_eq!(value, 3);
+
+    let value = calculate_final_count("(()(()(");
+    assert_eq!(value, 3);
+
+    let value = calculate_final_count("))(((((");
+    assert_eq!(value, 3);
+
+    let value = calculate_final_count("())");
+    assert_eq!(value, -1);
+
+    let value = calculate_final_count("))(");
+    assert_eq!(value, -1);
+
+    let value = calculate_final_count(")))");
+    assert_eq!(value, -3);
+
+    let value = calculate_final_count(")())())");
+    assert_eq!(value, -3);
+}
+
+#[test]
+fn calculate_calculate_moves_to_value() {
+    let moves = calculate_moves_to_value(")", -1);
+    assert_eq!(moves, 1);
+
+    let moves = calculate_moves_to_value("()())", -1);
+    assert_eq!(moves, 5);
 }
 
 #[test]
@@ -46,18 +85,17 @@ fn test_2015_day_1() {
     let contents =
         fs::read_to_string("input/2015/day-1.txt").expect("Failed to read file to string.");
 
-    let destination_floor = calculate_destination_floor(&contents);
-    assert_eq!(destination_floor, 280);
+    let destination_floor = calculate_final_count(&contents);
     println!(
         "The instructions take Santa to floor {}.",
         destination_floor
     );
+    assert_eq!(destination_floor, 280);
 
-    let first_basement_position = calculate_moves_to_floor(&contents, -1);
-
-    assert_eq!(first_basement_position, 1797);
+    let first_basement_position = calculate_moves_to_value(&contents, -1);
     println!(
         "The first position on floor -1 is {}.",
         first_basement_position
     );
+    assert_eq!(first_basement_position, 1797);
 }
