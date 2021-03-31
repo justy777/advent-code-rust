@@ -1,32 +1,32 @@
 use std::collections::HashSet;
 use std::fs;
 
-#[derive(Hash, Eq, PartialEq, Copy, Clone)]
-struct Point {
+#[derive(Debug, Hash, Eq, PartialEq, Copy, Clone)]
+struct Position {
     x: i32,
     y: i32,
 }
 
-impl Point {
-    fn new() -> Point {
-        Point { x: 0, y: 0 }
+impl Position {
+    fn new() -> Position {
+        Position { x: 0, y: 0 }
     }
 
-    fn move_cell(&self, direction: char) -> Option<Point> {
+    fn move_direction(&self, direction: char) -> Option<Position> {
         match direction {
-            '^' => Some(Point {
+            '^' => Some(Position {
                 x: self.x,
                 y: self.y + 1,
             }),
-            'v' => Some(Point {
+            'v' => Some(Position {
                 x: self.x,
                 y: self.y - 1,
             }),
-            '>' => Some(Point {
+            '>' => Some(Position {
                 x: self.x + 1,
                 y: self.y,
             }),
-            '<' => Some(Point {
+            '<' => Some(Position {
                 x: self.x - 1,
                 y: self.y,
             }),
@@ -35,32 +35,74 @@ impl Point {
     }
 }
 
-struct Grid {
-    current_positions: Vec<Point>,
-    past_positions: HashSet<Point>,
+pub struct InfiniteGrid {
+    current_positions: Vec<Position>,
+    past_positions: HashSet<Position>,
     turn: usize,
 }
 
-impl Grid {
-    fn new(parallel: usize) -> Grid {
+impl InfiniteGrid {
+    pub fn new(parallel: usize) -> InfiniteGrid {
         let mut past_positions = HashSet::new();
-        past_positions.insert(Point::new());
-        Grid {
-            current_positions: vec![Point::new(); parallel],
+        past_positions.insert(Position::new());
+        InfiniteGrid {
+            current_positions: vec![Position::new(); parallel],
             past_positions,
             turn: 0,
         }
     }
 
-    fn move_houses(&mut self, direction: char) {
+    pub fn move_position(&mut self, direction: char) {
         let position = self.current_positions[self.turn];
-        let new_position = position.move_cell(direction).unwrap();
+        if let Some(new_position) = position.move_direction(direction) {
+            self.past_positions.insert(new_position);
+            self.current_positions[self.turn] = new_position;
 
-        self.past_positions.insert(new_position);
-        self.current_positions[self.turn] = new_position;
-
-        self.turn = (self.turn + 1) % self.current_positions.len();
+            self.turn = (self.turn + 1) % self.current_positions.len();
+        }
     }
+
+    pub fn past_positions_len(&self) -> usize {
+        self.past_positions.len()
+    }
+}
+
+#[test]
+fn test_grid_move_position_bad_input() {
+    let mut grid = InfiniteGrid::new(1);
+    grid.move_position('f');
+    assert_eq!(grid.current_positions[0], Position::new());
+    assert_eq!(grid.turn, 0);
+}
+
+#[test]
+fn test_grid_single_position() {
+    let mut grid = InfiniteGrid::new(1);
+    grid.move_position('>');
+    assert_eq!(grid.past_positions_len(), 2);
+
+    let mut grid = InfiniteGrid::new(1);
+    "^>v<".chars().for_each(|c| grid.move_position(c));
+    assert_eq!(grid.past_positions_len(), 4);
+
+    let mut grid = InfiniteGrid::new(1);
+    "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
+    assert_eq!(grid.past_positions_len(), 2);
+}
+
+#[test]
+fn test_grid_two_positions() {
+    let mut grid = InfiniteGrid::new(2);
+    "^v".chars().for_each(|c| grid.move_position(c));
+    assert_eq!(grid.past_positions_len(), 3);
+
+    let mut grid = InfiniteGrid::new(2);
+    "^>v<".chars().for_each(|c| grid.move_position(c));
+    assert_eq!(grid.past_positions_len(), 3);
+
+    let mut grid = InfiniteGrid::new(2);
+    "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
+    assert_eq!(grid.past_positions_len(), 11);
 }
 
 #[test]
@@ -69,19 +111,19 @@ fn test_2015_day_3() {
     let contents =
         fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
 
-    let mut grid = Grid::new(1);
+    let mut grid = InfiniteGrid::new(1);
 
-    contents.chars().for_each(|c| grid.move_houses(c));
+    contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.past_positions.len();
+    let houses_visited = grid.past_positions_len();
     println!("Santa visited {} houses at least once.", houses_visited);
     assert_eq!(houses_visited, 2081);
 
-    let mut grid = Grid::new(2);
+    let mut grid = InfiniteGrid::new(2);
 
-    contents.chars().for_each(|c| grid.move_houses(c));
+    contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.past_positions.len();
+    let houses_visited = grid.past_positions_len();
     println!(
         "Santa and Robo-Santa visited {} houses at least once.",
         houses_visited
