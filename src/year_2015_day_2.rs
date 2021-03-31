@@ -2,14 +2,14 @@ use std::num::ParseIntError;
 use std::str::FromStr;
 use std::{cmp, fs};
 
-struct Present {
+pub struct Present {
     length: i32,
     width: i32,
     height: i32,
 }
 
 impl Present {
-    fn calculate_wrapping_paper_needed(&self) -> i32 {
+    pub fn wrapping_paper_needed(&self) -> i32 {
         let area_1 = self.length * self.width;
         let area_2 = self.width * self.height;
         let area_3 = self.height * self.length;
@@ -19,7 +19,7 @@ impl Present {
         (2 * (area_1 + area_2 + area_3)) + min_area
     }
 
-    fn calculate_ribbon_needed(&self) -> i32 {
+    pub fn ribbon_needed(&self) -> i32 {
         let needed_for_bow = self.length * self.width * self.height;
         let max = cmp::max(self.length, cmp::max(self.width, self.height));
         let smallest_perimeter = 2 * (self.length + self.width + self.height - max);
@@ -46,6 +46,24 @@ impl FromStr for Present {
 }
 
 #[test]
+fn test_wrapping_paper_needed() {
+    let present = Present::from_str("2x3x4").unwrap();
+    assert_eq!(present.wrapping_paper_needed(), 58);
+
+    let present = Present::from_str("1x1x10").unwrap();
+    assert_eq!(present.wrapping_paper_needed(), 43);
+}
+
+#[test]
+fn test_ribbon_needed() {
+    let present = Present::from_str("2x3x4").unwrap();
+    assert_eq!(present.ribbon_needed(), 34);
+
+    let present = Present::from_str("1x1x10").unwrap();
+    assert_eq!(present.ribbon_needed(), 14);
+}
+
+#[test]
 fn test_2015_day_2() {
     println!("Advent of Code 2015 - Day 2");
     let contents =
@@ -58,19 +76,16 @@ fn test_2015_day_2() {
 
     let wrapping_paper_needed: i32 = presents
         .iter()
-        .map(|present| present.calculate_wrapping_paper_needed())
+        .map(|present| present.wrapping_paper_needed())
         .sum();
 
     println!(
-        "The elves need {} feet of wrapping paper.",
+        "The elves need {} square feet of wrapping paper.",
         wrapping_paper_needed
     );
     assert_eq!(wrapping_paper_needed, 1586300);
 
-    let ribbon_needed: i32 = presents
-        .iter()
-        .map(|present| present.calculate_ribbon_needed())
-        .sum();
+    let ribbon_needed: i32 = presents.iter().map(|present| present.ribbon_needed()).sum();
 
     println!("The elves need {} feet of ribbon.", ribbon_needed);
     assert_eq!(ribbon_needed, 3737498);

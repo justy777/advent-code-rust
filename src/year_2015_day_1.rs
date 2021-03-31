@@ -7,17 +7,14 @@ struct Counter {
 
 impl Counter {
     fn new() -> Counter {
-        Counter {
-            count: 0,
-            moves: 0,
-        }
+        Counter { count: 0, moves: 0 }
     }
 
     fn move_count(&mut self, direction: char) {
         match direction {
             '(' => self.count += 1,
             ')' => self.count -= 1,
-            _ => (),
+            _ => return,
         };
         self.moves += 1;
     }
@@ -71,12 +68,20 @@ fn test_calculate_final_count() {
 }
 
 #[test]
-fn calculate_calculate_moves_to_value() {
+fn test_calculate_moves_to_value() {
     let moves = calculate_moves_to_value(")", -1);
     assert_eq!(moves, 1);
 
     let moves = calculate_moves_to_value("()())", -1);
     assert_eq!(moves, 5);
+}
+
+#[test]
+fn test_move_count_bad_input() {
+    let mut counter = Counter::new();
+    counter.move_count('f');
+    assert_eq!(counter.count, 0);
+    assert_eq!(counter.moves, 0);
 }
 
 #[test]
