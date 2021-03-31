@@ -74,7 +74,7 @@ impl Circuit {
 
     fn resolve_endpoint(&mut self, endpoint: &Endpoint) -> i32 {
         match endpoint {
-            Endpoint::Source(value) => value.clone(),
+            Endpoint::Source(value) => *value,
             Endpoint::Wire(name) => self.resolve_signal(&name),
         }
     }
@@ -142,7 +142,7 @@ fn test_2015_day_7() {
     circuit.resolve_circuit();
 
     let signal_a = circuit.signals.get("a").unwrap();
-    println!("The signal {} is provided to wire 'a'", signal_a);
+    println!("The signal {} is provided to wire 'a'.", signal_a);
     assert_eq!(signal_a, &16076);
 
     circuit.reset_circuit();
@@ -152,6 +152,6 @@ fn test_2015_day_7() {
     circuit.resolve_circuit();
 
     let signal_a = circuit.signals.get("a").unwrap();
-    println!("The signal {} is provided to wire 'a'", signal_a);
+    println!("The signal {} is provided to wire 'a'.", signal_a);
     assert_eq!(signal_a, &2797);
 }
