@@ -1,6 +1,9 @@
-use std::num::ParseIntError;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
 use std::str::FromStr;
-use std::{cmp, fs};
+use std::{cmp, fmt, fs};
+
+use regex::Regex;
 
 pub struct Present {
     length: i32,
@@ -28,20 +31,42 @@ impl Present {
     }
 }
 
+#[derive(Debug)]
+pub struct ParsePresentError {
+    pub(super) _priv: (),
+}
+
+impl Error for ParsePresentError {}
+
+impl Display for ParsePresentError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        "provided string was not in format '{length}x{width}x{height}'".fmt(f)
+    }
+}
+
 impl FromStr for Present {
-    type Err = ParseIntError;
+    type Err = ParsePresentError;
 
-    fn from_str(s: &str) -> Result<Present, ParseIntError> {
-        let dimensions: Vec<&str> = s.split('x').collect();
-        let length = dimensions[0].parse::<i32>()?;
-        let width = dimensions[1].parse::<i32>()?;
-        let height = dimensions[2].parse::<i32>()?;
+    fn from_str(s: &str) -> Result<Present, ParsePresentError> {
+        lazy_static! {
+            static ref REGEX: Regex =
+                Regex::new(r"^(?P<length>\d+)x(?P<width>\d+)x(?P<height>\d+)$").unwrap();
+        }
+        match REGEX.captures(s) {
+            Some(caps) => {
+                let parse = |key| caps.name(key).unwrap().as_str().parse::<i32>().unwrap();
+                let length = parse("length");
+                let width = parse("width");
+                let height = parse("height");
 
-        Ok(Present {
-            length,
-            width,
-            height,
-        })
+                Ok(Present {
+                    length,
+                    width,
+                    height,
+                })
+            }
+            None => Err(ParsePresentError { _priv: () }),
+        }
     }
 }
 
@@ -61,6 +86,24 @@ fn test_ribbon_needed() {
 
     let present = Present::from_str("1x1x10").unwrap();
     assert_eq!(present.ribbon_needed(), 14);
+}
+
+#[test]
+fn test_present_from_string_bad_input() {
+    match Present::from_str("hjhjxjhjhxikjk") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    }
+
+    match Present::from_str("1x1") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    }
+
+    match Present::from_str("1x1x1x1") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    }
 }
 
 #[test]
