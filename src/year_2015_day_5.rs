@@ -75,19 +75,36 @@ fn is_nice_word2(s: &str) -> bool {
 }
 
 #[test]
+fn test_is_nice_word() {
+    assert!(is_nice_word("ugknbfddgicrmopn"));
+    assert!(is_nice_word("aaa"));
+    assert!(!is_nice_word("jchzalrnumimnmhp"));
+    assert!(!is_nice_word("haegwjzuvuyypxyu"));
+    assert!(!is_nice_word("dvszwmarrgswjxmb"));
+}
+
+#[test]
+fn test_is_nice_word2() {
+    assert!(is_nice_word2("qjhvhtzxzqqjkmpb"));
+    assert!(is_nice_word2("xxyxx"));
+    assert!(!is_nice_word2("uurcxstgmygtbstg"));
+    assert!(!is_nice_word2("ieodomkazucvgmuy"));
+}
+
+#[test]
 fn test_2015_day_5() {
     println!("Advent of Code 2015 - Day 5");
     let contents =
         fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
 
-    let nice_word_count = contents.lines().filter(|line| is_nice_word(line)).count();
+    let nice_word_count = contents.lines().filter(|word| is_nice_word(word)).count();
     println!(
         "There are {} nice words with the first set of rules.",
         nice_word_count
     );
     assert_eq!(nice_word_count, 236);
 
-    let nice_word_count = contents.lines().filter(|line| is_nice_word2(line)).count();
+    let nice_word_count = contents.lines().filter(|word| is_nice_word2(word)).count();
     println!(
         "There are {} nice words with the second set of rules.",
         nice_word_count
