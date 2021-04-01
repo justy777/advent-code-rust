@@ -1,13 +1,17 @@
 use crypto::digest::Digest;
 use crypto::md5::Md5;
 
-pub fn find_md5_hash_leading_zeroes(key: &[u8], leading_zeroes: u64) -> Option<u64> {
+pub fn find_md5_hash_leading_zeroes(key: &[u8], leading_zeroes: u8) -> Option<u64> {
+    if leading_zeroes > 128 {
+        return None;
+    }
+
     let mut hasher = Md5::new();
 
-    let leading_bytes = if leading_zeroes % 2 == 0 {
-        leading_zeroes / 2
+    let (is_even, leading_bytes) = if leading_zeroes % 2 == 0 {
+        (true, leading_zeroes / 2)
     } else {
-        leading_zeroes / 2 + 1
+        (false, leading_zeroes / 2 + 1)
     };
 
     let mut result = None;
@@ -18,15 +22,12 @@ pub fn find_md5_hash_leading_zeroes(key: &[u8], leading_zeroes: u64) -> Option<u
         let mut output = [0; 16];
         hasher.result(&mut output);
 
-        let mut counter = leading_zeroes;
         let mut first_bytes = 0;
-        for byte in output.iter().take(leading_bytes as usize) {
-            if counter >= 2 {
-                first_bytes += *byte as u64;
-                counter -= 2;
-            } else {
+        for (i, byte) in output.iter().take(leading_bytes as usize).enumerate() {
+            if !is_even && i == (leading_bytes - 1) as usize {
                 first_bytes += (*byte >> 4) as u64;
-                counter -= 1;
+            } else {
+                first_bytes += *byte as u64;
             }
         }
 

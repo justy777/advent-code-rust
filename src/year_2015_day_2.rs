@@ -6,13 +6,13 @@ use std::{cmp, fmt, fs};
 use regex::Regex;
 
 pub struct Present {
-    length: i32,
-    width: i32,
-    height: i32,
+    length: u32,
+    width: u32,
+    height: u32,
 }
 
 impl Present {
-    pub fn wrapping_paper_needed(&self) -> i32 {
+    pub fn wrapping_paper_needed(&self) -> u32 {
         let area_1 = self.length * self.width;
         let area_2 = self.width * self.height;
         let area_3 = self.height * self.length;
@@ -22,7 +22,7 @@ impl Present {
         (2 * (area_1 + area_2 + area_3)) + min_area
     }
 
-    pub fn ribbon_needed(&self) -> i32 {
+    pub fn ribbon_needed(&self) -> u32 {
         let needed_for_bow = self.length * self.width * self.height;
         let max = cmp::max(self.length, cmp::max(self.width, self.height));
         let smallest_perimeter = 2 * (self.length + self.width + self.height - max);
@@ -54,7 +54,7 @@ impl FromStr for Present {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let parse = |key| caps.name(key).unwrap().as_str().parse::<i32>().unwrap();
+                let parse = |key| caps.name(key).unwrap().as_str().parse::<u32>().unwrap();
                 let length = parse("length");
                 let width = parse("width");
                 let height = parse("height");
@@ -104,6 +104,18 @@ fn test_present_from_string_bad_input() {
         Ok(_) => panic!(),
         Err(_) => (),
     }
+
+    match Present::from_str("-1x-1x-1") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    }
+}
+
+#[test]
+fn test_present_from_string_zero() {
+    let present = Present::from_str("0x0x0").unwrap();
+    assert_eq!(present.wrapping_paper_needed(), 0);
+    assert_eq!(present.ribbon_needed(), 0);
 }
 
 #[test]
@@ -117,7 +129,7 @@ fn test_2015_day_2() {
         .map(|line| Present::from_str(line).unwrap())
         .collect();
 
-    let wrapping_paper_needed: i32 = presents
+    let wrapping_paper_needed: u32 = presents
         .iter()
         .map(|present| present.wrapping_paper_needed())
         .sum();
@@ -128,7 +140,7 @@ fn test_2015_day_2() {
     );
     assert_eq!(wrapping_paper_needed, 1586300);
 
-    let ribbon_needed: i32 = presents.iter().map(|present| present.ribbon_needed()).sum();
+    let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
 
     println!("The elves need {} feet of ribbon.", ribbon_needed);
     assert_eq!(ribbon_needed, 3737498);

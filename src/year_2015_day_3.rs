@@ -53,6 +53,10 @@ impl InfiniteGrid {
     }
 
     pub fn move_position(&mut self, direction: char) {
+        if self.current_positions.is_empty() {
+            return;
+        }
+
         let position = self.current_positions[self.turn];
         if let Some(new_position) = position.move_direction(direction) {
             self.past_positions.insert(new_position);
@@ -73,6 +77,15 @@ fn test_grid_move_position_bad_input() {
     grid.move_position('f');
     assert_eq!(grid.current_positions[0], Position::new());
     assert_eq!(grid.turn, 0);
+}
+
+#[test]
+fn test_grid_parallel_zero() {
+    let mut grid = InfiniteGrid::new(0);
+    grid.move_position('^');
+    assert!(grid.current_positions.is_empty());
+    assert_eq!(grid.current_positions.len(), 0);
+    assert_eq!(grid.past_positions.len(), 1);
 }
 
 #[test]
