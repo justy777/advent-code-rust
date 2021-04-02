@@ -2,39 +2,42 @@ use std::fs;
 
 struct Counter {
     count: i32,
-    moves: i32,
+    operations: i32,
 }
 
 impl Counter {
     fn new() -> Counter {
-        Counter { count: 0, moves: 0 }
+        Counter {
+            count: 0,
+            operations: 0,
+        }
     }
 
-    fn move_count(&mut self, direction: char) {
-        match direction {
+    fn apply(&mut self, operation: char) {
+        match operation {
             '(' => self.count += 1,
             ')' => self.count -= 1,
             _ => return,
         };
-        self.moves += 1;
+        self.operations += 1;
     }
 }
 
-pub fn calculate_final_count(directions: &str) -> i32 {
+pub fn calculate_final_count(operations: &str) -> i32 {
     let mut counter = Counter::new();
-    directions.chars().for_each(|c| counter.move_count(c));
+    operations.chars().for_each(|c| counter.apply(c));
     counter.count
 }
 
-pub fn calculate_moves_to_value(directions: &str, stop_value: i32) -> i32 {
+pub fn calculate_operations_to_value(operations: &str, stop_value: i32) -> i32 {
     let mut counter = Counter::new();
-    for c in directions.chars() {
-        counter.move_count(c);
+    for c in operations.chars() {
+        counter.apply(c);
         if counter.count == stop_value {
             break;
         }
     }
-    counter.moves
+    counter.operations
 }
 
 #[test]
@@ -68,20 +71,20 @@ fn test_calculate_final_count() {
 }
 
 #[test]
-fn test_calculate_moves_to_value() {
-    let moves = calculate_moves_to_value(")", -1);
+fn test_calculate_operations_to_value() {
+    let moves = calculate_operations_to_value(")", -1);
     assert_eq!(moves, 1);
 
-    let moves = calculate_moves_to_value("()())", -1);
+    let moves = calculate_operations_to_value("()())", -1);
     assert_eq!(moves, 5);
 }
 
 #[test]
-fn test_move_count_bad_input() {
+fn test_apply_bad_input() {
     let mut counter = Counter::new();
-    counter.move_count('f');
+    counter.apply('f');
     assert_eq!(counter.count, 0);
-    assert_eq!(counter.moves, 0);
+    assert_eq!(counter.operations, 0);
 }
 
 #[test]
@@ -97,7 +100,7 @@ fn test_2015_day_1() {
     );
     assert_eq!(destination_floor, 280);
 
-    let first_basement_position = calculate_moves_to_value(&contents, -1);
+    let first_basement_position = calculate_operations_to_value(&contents, -1);
     println!(
         "The first position on floor -1 is {}.",
         first_basement_position
