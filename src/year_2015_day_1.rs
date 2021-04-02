@@ -13,26 +13,32 @@ impl Counter {
         }
     }
 
-    fn apply(&mut self, operation: char) {
+    fn apply(self, operation: char) -> Counter {
         match operation {
-            '(' => self.count += 1,
-            ')' => self.count -= 1,
-            _ => return,
-        };
-        self.operations += 1;
+            '(' => Counter {
+                count: self.count + 1,
+                operations: self.operations + 1,
+            },
+            ')' => Counter {
+                count: self.count - 1,
+                operations: self.operations + 1,
+            },
+            _ => self,
+        }
     }
 }
 
 pub fn calculate_final_count(operations: &str) -> i32 {
-    let mut counter = Counter::new();
-    operations.chars().for_each(|c| counter.apply(c));
+    let counter = operations
+        .chars()
+        .fold(Counter::new(), |counter, c| counter.apply(c));
     counter.count
 }
 
 pub fn calculate_operations_to_value(operations: &str, stop_value: i32) -> i32 {
     let mut counter = Counter::new();
     for c in operations.chars() {
-        counter.apply(c);
+        counter = counter.apply(c);
         if counter.count == stop_value {
             break;
         }
@@ -82,7 +88,7 @@ fn test_calculate_operations_to_value() {
 #[test]
 fn test_apply_bad_input() {
     let mut counter = Counter::new();
-    counter.apply('f');
+    counter = counter.apply('f');
     assert_eq!(counter.count, 0);
     assert_eq!(counter.operations, 0);
 }
