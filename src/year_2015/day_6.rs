@@ -25,15 +25,9 @@ trait State {
     fn brightness(&self) -> i32;
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct SimpleBulb {
     state: bool,
-}
-
-impl SimpleBulb {
-    fn new() -> SimpleBulb {
-        SimpleBulb { state: false }
-    }
 }
 
 impl State for SimpleBulb {
@@ -58,15 +52,9 @@ impl State for SimpleBulb {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct DimmableBulb {
     state: i32,
-}
-
-impl DimmableBulb {
-    fn new() -> DimmableBulb {
-        DimmableBulb { state: 0 }
-    }
 }
 
 impl State for DimmableBulb {
@@ -95,10 +83,10 @@ struct LightGrid<T: State> {
 
 const GRID_CAPACITY: usize = 1000;
 
-impl<T: State + Clone> LightGrid<T> {
-    fn new(bulb: T) -> LightGrid<T> {
+impl<T: State + Clone + Default> LightGrid<T> {
+    fn new() -> LightGrid<T> {
         LightGrid {
-            lights: vec![vec![bulb; GRID_CAPACITY]; GRID_CAPACITY],
+            lights: vec![vec![T::default(); GRID_CAPACITY]; GRID_CAPACITY],
         }
     }
 
@@ -157,7 +145,7 @@ impl<T: State + Clone> LightGrid<T> {
 
 #[test]
 fn test_light_grid_follow_instruction_bad_input() {
-    let mut grid = LightGrid::new(SimpleBulb::new());
+    let mut grid = LightGrid::<SimpleBulb>::new();
     match grid.follow_instruction("pancakes") {
         Ok(_) => panic!(),
         Err(_) => (),
@@ -194,7 +182,7 @@ impl Display for ParseInstructionError {
 
 #[test]
 fn test_light_grid_follow_instruction() {
-    let mut grid = LightGrid::new(SimpleBulb::new());
+    let mut grid = LightGrid::<SimpleBulb>::new();
     grid.follow_instruction("turn on 0,0 through 999,999")
         .unwrap();
     assert_eq!(grid.total_brightness(), 1000000);
@@ -203,18 +191,18 @@ fn test_light_grid_follow_instruction() {
         .unwrap();
     assert_eq!(grid.total_brightness(), 999996);
 
-    let mut grid = LightGrid::new(SimpleBulb::new());
+    let mut grid = LightGrid::<SimpleBulb>::new();
     grid.follow_instruction("toggle 0,0 through 999,0").unwrap();
     assert_eq!(grid.total_brightness(), 1000);
 }
 
 #[test]
 fn test_light_grid_increase_brightness() {
-    let mut grid = LightGrid::new(DimmableBulb::new());
+    let mut grid = LightGrid::<DimmableBulb>::new();
     grid.follow_instruction("turn on 0,0 through 0,0").unwrap();
     assert_eq!(grid.total_brightness(), 1);
 
-    let mut grid = LightGrid::new(DimmableBulb::new());
+    let mut grid = LightGrid::<DimmableBulb>::new();
     grid.follow_instruction("toggle 0,0 through 999,999")
         .unwrap();
     assert_eq!(grid.total_brightness(), 2000000);
@@ -226,7 +214,7 @@ fn test_2015_day_6() {
     let contents =
         fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
-    let mut grid = LightGrid::new(SimpleBulb::new());
+    let mut grid = LightGrid::<SimpleBulb>::new();
     contents
         .lines()
         .for_each(|line| grid.follow_instruction(line).unwrap());
@@ -234,7 +222,7 @@ fn test_2015_day_6() {
     println!("There are {} lights lit.", lit_lights_count);
     assert_eq!(lit_lights_count, 543903);
 
-    let mut grid = LightGrid::new(DimmableBulb::new());
+    let mut grid = LightGrid::<DimmableBulb>::new();
     contents
         .lines()
         .for_each(|line| grid.follow_instruction(line).unwrap());
