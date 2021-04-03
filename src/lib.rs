@@ -8,6 +8,7 @@ mod year_2015_day_4;
 mod year_2015_day_5;
 mod year_2015_day_6;
 mod year_2015_day_7;
+mod year_2015_day_8;
 
 #[cfg(test)]
 mod tests {}

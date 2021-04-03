@@ -1,8 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
 
-use regex::Regex;
-
 #[derive(Clone)]
 enum Endpoint {
     Source(u16),
