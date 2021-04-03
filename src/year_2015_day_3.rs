@@ -1,5 +1,6 @@
-use std::collections::HashSet;
 use std::fs;
+
+use hashbrown::HashSet;
 
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone)]
 struct Position {
