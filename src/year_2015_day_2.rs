@@ -3,6 +3,7 @@ use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 use std::{cmp, fmt, fs};
 
+use rayon::prelude::*;
 use regex::Regex;
 
 pub struct Present {
@@ -125,12 +126,12 @@ fn test_2015_day_2() {
         fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents
-        .lines()
+        .par_lines()
         .map(|line| Present::from_str(line).unwrap())
         .collect();
 
     let wrapping_paper_needed: u32 = presents
-        .iter()
+        .par_iter()
         .map(|present| present.wrapping_paper_needed())
         .sum();
 
@@ -140,7 +141,10 @@ fn test_2015_day_2() {
     );
     assert_eq!(wrapping_paper_needed, 1586300);
 
-    let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
+    let ribbon_needed: u32 = presents
+        .par_iter()
+        .map(|present| present.ribbon_needed())
+        .sum();
 
     println!("The elves need {} feet of ribbon.", ribbon_needed);
     assert_eq!(ribbon_needed, 3737498);
