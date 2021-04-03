@@ -1,15 +1,17 @@
 use std::collections::HashMap;
 use std::fs;
 
+use regex::Regex;
+
 #[derive(Clone)]
 enum Endpoint {
-    Source(i32),
+    Source(u16),
     Wire(String),
 }
 
 impl From<&str> for Endpoint {
     fn from(s: &str) -> Endpoint {
-        let test = s.parse::<i32>();
+        let test = s.parse::<u16>();
         match test {
             Ok(value) => Endpoint::Source(value),
             Err(_) => Endpoint::Wire(String::from(s)),
@@ -23,13 +25,13 @@ enum Gate {
     Not(Endpoint),
     And(Endpoint, Endpoint),
     Or(Endpoint, Endpoint),
-    LeftShift(Endpoint, i32),
-    RightShift(Endpoint, i32),
+    LeftShift(Endpoint, u16),
+    RightShift(Endpoint, u16),
 }
 
 struct Circuit {
     parts: HashMap<String, Gate>,
-    signals: HashMap<String, i32>,
+    signals: HashMap<String, u16>,
 }
 
 impl Circuit {
@@ -55,7 +57,7 @@ impl Circuit {
         self.signals = HashMap::new();
     }
 
-    fn resolve_signal(&mut self, name: &str) -> i32 {
+    fn resolve_signal(&mut self, name: &str) -> u16 {
         if self.signals.contains_key(name) {
             return *self.signals.get(name).unwrap();
         }
@@ -72,7 +74,7 @@ impl Circuit {
         signal
     }
 
-    fn resolve_endpoint(&mut self, endpoint: &Endpoint) -> i32 {
+    fn resolve_endpoint(&mut self, endpoint: &Endpoint) -> u16 {
         match endpoint {
             Endpoint::Source(value) => *value,
             Endpoint::Wire(name) => self.resolve_signal(&name),
@@ -100,7 +102,7 @@ impl Circuit {
             let mut iter = instruction.split(' ');
             let operand = Endpoint::from(iter.next().unwrap());
             iter.next();
-            let shift = iter.next().unwrap().parse::<i32>().unwrap();
+            let shift = iter.next().unwrap().parse::<u16>().unwrap();
             iter.next();
             let output = String::from(iter.next().unwrap());
             self.add_gate(output, Gate::LeftShift(operand, shift))
@@ -108,7 +110,7 @@ impl Circuit {
             let mut iter = instruction.split(' ');
             let operand = Endpoint::from(iter.next().unwrap());
             iter.next();
-            let shift = iter.next().unwrap().parse::<i32>().unwrap();
+            let shift = iter.next().unwrap().parse::<u16>().unwrap();
             iter.next();
             let output = String::from(iter.next().unwrap());
             self.add_gate(output, Gate::RightShift(operand, shift))
@@ -127,6 +129,30 @@ impl Circuit {
             self.add_gate(output, Gate::NoOp(operand))
         }
     }
+}
+
+#[test]
+fn test_small_circuit() {
+    let mut circuit = Circuit::new();
+    circuit.follow_instruction("123 -> x");
+    circuit.follow_instruction("456 -> y");
+    circuit.follow_instruction("x AND y -> d");
+    circuit.follow_instruction("x OR y -> e");
+    circuit.follow_instruction("x LSHIFT 2 -> f");
+    circuit.follow_instruction("y RSHIFT 2 -> g");
+    circuit.follow_instruction("NOT x -> h");
+    circuit.follow_instruction("NOT y -> i");
+
+    circuit.resolve_circuit();
+
+    assert_eq!(circuit.signals.get("d").unwrap(), &72);
+    assert_eq!(circuit.signals.get("e").unwrap(), &507);
+    assert_eq!(circuit.signals.get("f").unwrap(), &492);
+    assert_eq!(circuit.signals.get("g").unwrap(), &114);
+    assert_eq!(circuit.signals.get("h").unwrap(), &65412);
+    assert_eq!(circuit.signals.get("i").unwrap(), &65079);
+    assert_eq!(circuit.signals.get("x").unwrap(), &123);
+    assert_eq!(circuit.signals.get("y").unwrap(), &456);
 }
 
 #[test]
