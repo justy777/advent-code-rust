@@ -67,7 +67,7 @@ impl InfiniteGrid {
         }
     }
 
-    pub fn past_positions_len(&self) -> usize {
+    pub fn position_count(&self) -> usize {
         self.past_positions.len()
     }
 }
@@ -93,30 +93,30 @@ fn test_grid_parallel_zero() {
 fn test_grid_single_position() {
     let mut grid = InfiniteGrid::new(1);
     grid.move_position('>');
-    assert_eq!(grid.past_positions_len(), 2);
+    assert_eq!(grid.position_count(), 2);
 
     let mut grid = InfiniteGrid::new(1);
     "^>v<".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.past_positions_len(), 4);
+    assert_eq!(grid.position_count(), 4);
 
     let mut grid = InfiniteGrid::new(1);
     "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.past_positions_len(), 2);
+    assert_eq!(grid.position_count(), 2);
 }
 
 #[test]
 fn test_grid_two_positions() {
     let mut grid = InfiniteGrid::new(2);
     "^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.past_positions_len(), 3);
+    assert_eq!(grid.position_count(), 3);
 
     let mut grid = InfiniteGrid::new(2);
     "^>v<".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.past_positions_len(), 3);
+    assert_eq!(grid.position_count(), 3);
 
     let mut grid = InfiniteGrid::new(2);
     "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.past_positions_len(), 11);
+    assert_eq!(grid.position_count(), 11);
 }
 
 #[test]
@@ -129,7 +129,7 @@ fn test_2015_day_3() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.past_positions_len();
+    let houses_visited = grid.position_count();
     println!("Santa visited {} houses at least once.", houses_visited);
     assert_eq!(houses_visited, 2081);
 
@@ -137,7 +137,7 @@ fn test_2015_day_3() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.past_positions_len();
+    let houses_visited = grid.position_count();
     println!(
         "Santa and Robo-Santa visited {} houses at least once.",
         houses_visited
