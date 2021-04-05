@@ -25,11 +25,8 @@ fn escape_string(before: &str) -> String {
 #[test]
 fn test_reformat_string() {
     let list = vec!["\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\""];
-    let before = list.iter().fold(0, |acc, s| acc + s.len());
-    let after = list
-        .iter()
-        .map(|s| reformat_string(s))
-        .fold(0, |acc, s| acc + s.len());
+    let before: usize = list.iter().map(|s| s.len()).sum();
+    let after: usize = list.iter().map(|s| reformat_string(s).len()).sum();
     assert_eq!(before, 23);
     assert_eq!(after, 11);
 }
@@ -37,11 +34,8 @@ fn test_reformat_string() {
 #[test]
 fn test_escape_string() {
     let list = vec!["\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\""];
-    let before = list.iter().fold(0, |acc, s| acc + s.len());
-    let after = list
-        .iter()
-        .map(|s| escape_string(s))
-        .fold(0, |acc, s| acc + s.len());
+    let before: usize = list.iter().map(|s| s.len()).sum();
+    let after: usize = list.iter().map(|s| escape_string(s).len()).sum();
     assert_eq!(before, 23);
     assert_eq!(after, 42);
 }
@@ -52,19 +46,13 @@ fn test_2015_day_8() {
     let contents =
         fs::read_to_string("input/2015/day-8.txt").expect("Failed to read file to string.");
 
-    let before = contents.lines().fold(0, |acc, s| acc + s.len());
-    let after = contents
-        .lines()
-        .map(|s| reformat_string(s))
-        .fold(0, |acc, s| acc + s.len());
+    let before: usize = contents.lines().map(|s| s.len()).sum();
+    let after: usize = contents.lines().map(|s| reformat_string(s).len()).sum();
 
     println!("The difference between the string literals characters and the string value characters in memory is {} characters.", before - after);
     assert_eq!(before - after, 1333);
 
-    let after = contents
-        .lines()
-        .map(|s| escape_string(s))
-        .fold(0, |acc, s| acc + s.len());
+    let after: usize = contents.lines().map(|s| escape_string(s).len()).sum();
 
     println!("The difference between the newly encoded string characters and the string literals characters is {} characters.", after - before);
     assert_eq!(after - before, 2046);
