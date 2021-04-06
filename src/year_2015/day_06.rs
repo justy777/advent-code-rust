@@ -15,7 +15,7 @@ enum Operation {
     TurnOff,
 }
 
-trait State {
+trait State: Clone + Default {
     fn toggle(&mut self);
 
     fn turn_on(&mut self);
@@ -83,7 +83,7 @@ struct LightGrid<T: State> {
 
 const GRID_CAPACITY: usize = 1000;
 
-impl<T: State + Clone + Default> LightGrid<T> {
+impl<T: State> LightGrid<T> {
     fn new() -> LightGrid<T> {
         LightGrid {
             lights: vec![vec![T::default(); GRID_CAPACITY]; GRID_CAPACITY],
