@@ -1,7 +1,7 @@
 use std::str;
 
 fn rotate_letter(c: u8, n: u8) -> u8 {
-    (((c - 'a' as u8) + n) % 26) + 'a' as u8
+    (((c - b'a') + n) % 26) + b'a'
 }
 
 fn contains_increasing_straight_of_three(s: &[u8]) -> bool {
@@ -60,15 +60,15 @@ fn next_password(old_password: &str) -> String {
     let mut password = Vec::from(old_password);
     if let Some(start_position) = password.iter().position(|c| "iol".as_bytes().contains(c)) {
         password[start_position] = rotate_letter(password[start_position], 1);
-        for i in (start_position + 1)..password.len() {
-            password[i] = 'a' as u8;
+        for letter in password.iter_mut().skip(start_position + 1) {
+            *letter = b'a';
         }
     };
     let mut position = password.len() - 1;
     while !is_password(&password) || old_password.as_bytes() == password.as_slice() {
         let letter = rotate_letter(password[position], 1);
         password[position] = letter;
-        if letter == 'z' as u8 {
+        if letter == b'z' {
             position -= 1;
             continue;
         }
