@@ -90,7 +90,7 @@ fn test_ribbon_needed() {
 }
 
 #[test]
-fn test_present_from_string_bad_input() {
+fn test_present_from_str_bad_input() {
     match Present::from_str("hjhjxjhjhxikjk") {
         Ok(_) => panic!(),
         Err(_) => (),
@@ -113,7 +113,7 @@ fn test_present_from_string_bad_input() {
 }
 
 #[test]
-fn test_present_from_string_zero() {
+fn test_present_from_str_zero() {
     let present = Present::from_str("0x0x0").unwrap();
     assert_eq!(present.wrapping_paper_needed(), 0);
     assert_eq!(present.ribbon_needed(), 0);

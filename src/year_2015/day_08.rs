@@ -18,13 +18,13 @@ fn escape_string(before: &str) -> String {
         static ref ESCAPE_REGEX: Regex = Regex::new(r#"(?P<s>[\\"])"#).unwrap();
         static ref DOUBLE_QUOTES_REGEX: Regex = Regex::new(r"(?P<s>\S+)").unwrap();
     }
-    let s = ESCAPE_REGEX.replace_all(&before, "\\$s");
-    DOUBLE_QUOTES_REGEX.replace(&s, "\"$s\"").to_string()
+    let s = ESCAPE_REGEX.replace_all(&before, r"\$s");
+    DOUBLE_QUOTES_REGEX.replace(&s, r#""$s""#).to_string()
 }
 
 #[test]
 fn test_reformat_string() {
-    let list = vec!["\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\""];
+    let list = vec![r#""""#, r#""abc""#, r#""aaa\"aaa""#, r#""\x27""#];
     let before: usize = list.iter().map(|s| s.len()).sum();
     let after: usize = list.iter().map(|s| reformat_string(s).len()).sum();
     assert_eq!(before, 23);
@@ -33,7 +33,7 @@ fn test_reformat_string() {
 
 #[test]
 fn test_escape_string() {
-    let list = vec!["\"\"", "\"abc\"", "\"aaa\\\"aaa\"", "\"\\x27\""];
+    let list = vec![r#""""#, r#""abc""#, r#""aaa\"aaa""#, r#""\x27""#];
     let before: usize = list.iter().map(|s| s.len()).sum();
     let after: usize = list.iter().map(|s| escape_string(s).len()).sum();
     assert_eq!(before, 23);

@@ -24,7 +24,7 @@ fn contains_double_letter(s: &str) -> bool {
     found
 }
 
-fn contains_forbidden_strings(s: &str) -> bool {
+fn contains_forbidden_str(s: &str) -> bool {
     if s.len() < 2 {
         return false;
     }
@@ -36,7 +36,7 @@ fn contains_forbidden_strings(s: &str) -> bool {
 }
 
 fn is_nice_word(s: &str) -> bool {
-    count_vowels(s) >= 3 && contains_double_letter(s) && !contains_forbidden_strings(s)
+    count_vowels(s) >= 3 && contains_double_letter(s) && !contains_forbidden_str(s)
 }
 
 fn contains_pair_of_letters_twice(s: &str) -> bool {
