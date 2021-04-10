@@ -30,7 +30,7 @@ impl Graph {
         self.edges.get(&edge_key).unwrap()
     }
 
-    fn shortest_path(&self) -> u32 {
+    fn all_paths(&self) -> Vec<u32> {
         let permutations: Vec<Vec<&String>> = self
             .vertices
             .iter()
@@ -45,24 +45,16 @@ impl Graph {
             }
             scores.push(cost);
         }
+        scores
+    }
+
+    fn shortest_path(&self) -> u32 {
+        let scores = self.all_paths();
         scores.iter().min().unwrap().to_owned()
     }
 
     fn longest_path(&self) -> u32 {
-        let permutations: Vec<Vec<&String>> = self
-            .vertices
-            .iter()
-            .permutations(self.vertices.len())
-            .collect();
-
-        let mut scores = Vec::new();
-        for permutation in permutations {
-            let mut cost = 0;
-            for i in 0..permutation.len() - 1 {
-                cost += self.cost(permutation[i], permutation[i + 1]);
-            }
-            scores.push(cost);
-        }
+        let scores = self.all_paths();
         scores.iter().max().unwrap().to_owned()
     }
 }
