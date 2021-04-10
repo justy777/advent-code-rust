@@ -1,14 +1,12 @@
 use std::fs;
 use std::str::FromStr;
 
-use rayon::prelude::*;
-
 use advent_code_rust::year_2015::day_01::{calculate_final_count, calculate_operations_to_value};
 use advent_code_rust::year_2015::day_02::Present;
 use advent_code_rust::year_2015::day_03::InfiniteGrid;
 use advent_code_rust::year_2015::day_04::find_md5_hash_leading_zeroes;
 use advent_code_rust::year_2015::day_05::{is_nice_word, is_nice_word2};
-use advent_code_rust::year_2015::day_06::{DimmableBulb, LightGrid, SimpleBulb};
+use advent_code_rust::year_2015::day_06::{DimmableBulb, LightGrid, LightInstruction, SimpleBulb};
 use advent_code_rust::year_2015::day_07::Circuit;
 use advent_code_rust::year_2015::day_08::{escape_string, reformat_string};
 use advent_code_rust::year_2015::day_10::look_and_say;
@@ -53,12 +51,12 @@ fn run_2015_02() {
         fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents
-        .par_lines()
+        .lines()
         .map(|line| Present::from_str(line).unwrap())
         .collect();
 
     let wrapping_paper_needed: u32 = presents
-        .par_iter()
+        .iter()
         .map(|present| present.wrapping_paper_needed())
         .sum();
 
@@ -67,10 +65,7 @@ fn run_2015_02() {
         wrapping_paper_needed
     );
 
-    let ribbon_needed: u32 = presents
-        .par_iter()
-        .map(|present| present.ribbon_needed())
-        .sum();
+    let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
 
     println!("The elves need {} feet of ribbon.", ribbon_needed);
 }
@@ -141,14 +136,16 @@ fn run_2015_06() {
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
         .lines()
-        .for_each(|line| grid.follow_instruction(line).unwrap());
+        .map(|line| LightInstruction::from_str(line).unwrap())
+        .for_each(|instruction| grid.apply_operation(instruction));
     let lit_lights_count = grid.total_brightness();
     println!("There are {} lights lit.", lit_lights_count);
 
     let mut grid = LightGrid::<DimmableBulb>::new();
     contents
         .lines()
-        .for_each(|line| grid.follow_instruction(line).unwrap());
+        .map(|line| LightInstruction::from_str(line).unwrap())
+        .for_each(|instruction| grid.apply_operation(instruction));
     let total_brightness = grid.total_brightness();
     println!("The total brightness is {}.", total_brightness);
 }

@@ -3,6 +3,7 @@ use std::fmt;
 use std::fmt::{Display, Formatter};
 
 use regex::Regex;
+use std::str::FromStr;
 
 struct Point {
     x: usize,
@@ -100,10 +101,10 @@ impl<T: State> LightGrid<T> {
         count
     }
 
-    fn apply_operation(&mut self, operation: Operation, start_point: Point, end_point: Point) {
-        for x in start_point.x..=end_point.x {
-            for y in start_point.y..=end_point.y {
-                match operation {
+    pub fn apply_operation(&mut self, instruction: LightInstruction) {
+        for x in instruction.start_point.x..=instruction.end_point.x {
+            for y in instruction.start_point.y..=instruction.end_point.y {
+                match instruction.operation {
                     Operation::Toggle => self.lights[x][y].toggle(),
                     Operation::TurnOn => self.lights[x][y].turn_on(),
                     Operation::TurnOff => self.lights[x][y].turn_off(),
@@ -111,13 +112,29 @@ impl<T: State> LightGrid<T> {
             }
         }
     }
+}
 
-    pub fn follow_instruction(&mut self, instruction: &str) -> Result<(), ParseInstructionError> {
+impl<T: State> Default for LightGrid<T> {
+    fn default() -> Self {
+        LightGrid::new()
+    }
+}
+
+pub struct LightInstruction {
+    operation: Operation,
+    start_point: Point,
+    end_point: Point,
+}
+
+impl FromStr for LightInstruction {
+    type Err = ParseInstructionError;
+
+    fn from_str(s: &str) -> Result<LightInstruction, ParseInstructionError> {
         lazy_static! {
             static ref REGEX: Regex = Regex::new(r"^(?P<operation>toggle|turn on|turn off) (?P<x1>\d{1,3}),(?P<y1>\d{1,3}) through (?P<x2>\d{1,3}),(?P<y2>\d{1,3})$").unwrap();
         }
 
-        match REGEX.captures(instruction) {
+        match REGEX.captures(s) {
             Some(caps) => {
                 let operation = match caps.name("operation").unwrap().as_str() {
                     "toggle" => Operation::Toggle,
@@ -132,45 +149,18 @@ impl<T: State> LightGrid<T> {
                 let x2 = parse_int("x2");
                 let y2 = parse_int("y2");
 
-                let point1 = Point { x: x1, y: y1 };
-                let point2 = Point { x: x2, y: y2 };
+                let start_point = Point { x: x1, y: y1 };
+                let end_point = Point { x: x2, y: y2 };
 
-                self.apply_operation(operation, point1, point2);
-                Ok(())
+                Ok(LightInstruction {
+                    operation,
+                    start_point,
+                    end_point,
+                })
             }
             None => Err(ParseInstructionError { _priv: () }),
         }
     }
-}
-
-impl<T: State> Default for LightGrid<T> {
-    fn default() -> Self {
-        LightGrid::new()
-    }
-}
-
-#[test]
-fn test_light_grid_follow_instruction_bad_input() {
-    let mut grid = LightGrid::<SimpleBulb>::new();
-    match grid.follow_instruction("pancakes") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-
-    match grid.follow_instruction("switch 0,0 through 999,0") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-
-    match grid.follow_instruction("switch -1,0 through 999,0") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-
-    match grid.follow_instruction("turn on 1000,1001 through 1000,1002") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
 }
 
 #[derive(Debug)]
@@ -187,30 +177,55 @@ impl Display for ParseInstructionError {
 }
 
 #[test]
+fn test_light_grid_follow_instruction_bad_input() {
+    match LightInstruction::from_str("pancakes") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    };
+
+    match LightInstruction::from_str("switch 0,0 through 999,0") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    };
+
+    match LightInstruction::from_str("switch -1,0 through 999,0") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    };
+
+    match LightInstruction::from_str("turn on 1000,1001 through 1000,1002") {
+        Ok(_) => panic!(),
+        Err(_) => (),
+    };
+}
+
+#[test]
 fn test_light_grid_follow_instruction() {
     let mut grid = LightGrid::<SimpleBulb>::new();
-    grid.follow_instruction("turn on 0,0 through 999,999")
-        .unwrap();
+    let instruction = LightInstruction::from_str("turn on 0,0 through 999,999").unwrap();
+    grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 1000000);
 
-    grid.follow_instruction("turn off 499,499 through 500,500")
-        .unwrap();
+    let instruction = LightInstruction::from_str("turn off 499,499 through 500,500").unwrap();
+    grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 999996);
 
     let mut grid = LightGrid::<SimpleBulb>::new();
-    grid.follow_instruction("toggle 0,0 through 999,0").unwrap();
+    let instruction = LightInstruction::from_str("toggle 0,0 through 999,0").unwrap();
+    grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 1000);
 }
 
 #[test]
 fn test_light_grid_increase_brightness() {
     let mut grid = LightGrid::<DimmableBulb>::new();
-    grid.follow_instruction("turn on 0,0 through 0,0").unwrap();
+    let instruction = LightInstruction::from_str("turn on 0,0 through 0,0").unwrap();
+    grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 1);
 
     let mut grid = LightGrid::<DimmableBulb>::new();
-    grid.follow_instruction("toggle 0,0 through 999,999")
-        .unwrap();
+    let instruction = LightInstruction::from_str("toggle 0,0 through 999,999").unwrap();
+    grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 2000000);
 }
 
@@ -222,7 +237,8 @@ fn test_simple_bulbs_input_file() {
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
         .lines()
-        .for_each(|line| grid.follow_instruction(line).unwrap());
+        .map(|line| LightInstruction::from_str(line).unwrap())
+        .for_each(|instruction| grid.apply_operation(instruction));
     let lit_lights_count = grid.total_brightness();
     assert_eq!(lit_lights_count, 543903);
 }
@@ -235,7 +251,8 @@ fn test_dimmable_bulbs_input_file() {
     let mut grid = LightGrid::<DimmableBulb>::new();
     contents
         .lines()
-        .for_each(|line| grid.follow_instruction(line).unwrap());
+        .map(|line| LightInstruction::from_str(line).unwrap())
+        .for_each(|instruction| grid.apply_operation(instruction));
     let total_brightness = grid.total_brightness();
     assert_eq!(total_brightness, 14687245);
 }
