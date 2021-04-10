@@ -1,29 +1,30 @@
 use std::collections::{HashMap, HashSet};
 
 use itertools::Itertools;
+use std::str::FromStr;
 
-struct Graph {
+pub struct Graph {
     vertices: HashSet<String>,
     edges: HashMap<[String; 2], u32>,
 }
 
 impl Graph {
-    fn new() -> Graph {
+    pub fn new() -> Graph {
         Graph {
             vertices: HashSet::new(),
             edges: HashMap::new(),
         }
     }
 
-    fn add_edge(&mut self, source: &str, destination: &str, weight: u32) {
-        self.vertices.insert(String::from(source));
-        self.vertices.insert(String::from(destination));
-        let mut edge_key = [String::from(source), String::from(destination)];
+    pub fn add_edge(&mut self, edge: Edge) {
+        self.vertices.insert(edge.source.clone());
+        self.vertices.insert(edge.destination.clone());
+        let mut edge_key = [edge.source, edge.destination];
         edge_key.sort();
-        self.edges.insert(edge_key, weight);
+        self.edges.insert(edge_key, edge.weight);
     }
 
-    fn cost(&self, source: &str, destination: &str) -> &u32 {
+    fn weight(&self, source: &str, destination: &str) -> &u32 {
         let mut edge_key = [String::from(source), String::from(destination)];
         edge_key.sort();
         self.edges.get(&edge_key).unwrap()
@@ -40,30 +41,63 @@ impl Graph {
         for permutation in permutations {
             let mut cost = 0;
             for i in 0..permutation.len() - 1 {
-                cost += self.cost(permutation[i], permutation[i + 1]);
+                cost += self.weight(permutation[i], permutation[i + 1]);
             }
             scores.push(cost);
         }
         scores
     }
 
-    fn shortest_path(&self) -> u32 {
+    pub fn shortest_path(&self) -> u32 {
         let scores = self.all_paths();
         scores.iter().min().unwrap().to_owned()
     }
 
-    fn longest_path(&self) -> u32 {
+    pub fn longest_path(&self) -> u32 {
         let scores = self.all_paths();
         scores.iter().max().unwrap().to_owned()
+    }
+}
+
+impl Default for Graph {
+    fn default() -> Self {
+        Graph::new()
+    }
+}
+
+pub struct Edge {
+    source: String,
+    destination: String,
+    weight: u32,
+}
+
+impl FromStr for Edge {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let s: Vec<&str> = s.split(' ').collect();
+        let source = s[0].to_string();
+        let destination = s[2].to_string();
+        let weight = s[4].parse::<u32>().unwrap();
+
+        Ok(Edge {
+            source,
+            destination,
+            weight,
+        })
     }
 }
 
 #[test]
 fn test_shortest_path() {
     let mut graph = Graph::new();
-    graph.add_edge("London", "Dublin", 464);
-    graph.add_edge("London", "Belfast", 518);
-    graph.add_edge("Dublin", "Belfast", 141);
+
+    let edge = Edge::from_str("London to Dublin = 464").unwrap();
+    graph.add_edge(edge);
+    let edge = Edge::from_str("London to Belfast = 518").unwrap();
+    graph.add_edge(edge);
+    let edge = Edge::from_str("Dublin to Belfast = 141").unwrap();
+    graph.add_edge(edge);
 
     let min = graph.shortest_path();
     assert_eq!(min, 605);
@@ -72,34 +106,44 @@ fn test_shortest_path() {
 #[test]
 fn test_longest_path() {
     let mut graph = Graph::new();
-    graph.add_edge("London", "Dublin", 464);
-    graph.add_edge("London", "Belfast", 518);
-    graph.add_edge("Dublin", "Belfast", 141);
+
+    let edge = Edge::from_str("London to Dublin = 464").unwrap();
+    graph.add_edge(edge);
+    let edge = Edge::from_str("London to Belfast = 518").unwrap();
+    graph.add_edge(edge);
+    let edge = Edge::from_str("Dublin to Belfast = 141").unwrap();
+    graph.add_edge(edge);
 
     let min = graph.longest_path();
     assert_eq!(min, 982);
 }
 
 #[test]
-fn test_year_2015_day_9() {
-    println!("Advent of Code 2015 - Day 9");
+fn test_shortest_path_input_file() {
     let contents =
         std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
     for line in contents.lines() {
-        let s: Vec<&str> = line.split(' ').collect();
-        let source = s[0];
-        let destination = s[2];
-        let cost = s[4].parse::<u32>().unwrap();
-        graph.add_edge(source, destination, cost);
+        let edge = Edge::from_str(line).unwrap();
+        graph.add_edge(edge);
     }
 
     let min = graph.shortest_path();
-    println!("The distance of the shortest route is {}.", min);
     assert_eq!(min, 207);
+}
+
+#[test]
+fn test_longest_path_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+
+    let mut graph = Graph::new();
+    for line in contents.lines() {
+        let edge = Edge::from_str(line).unwrap();
+        graph.add_edge(edge);
+    }
 
     let max = graph.longest_path();
-    println!("The distance of the longest route is {}.", max);
     assert_eq!(max, 804);
 }

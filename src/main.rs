@@ -9,6 +9,7 @@ use advent_code_rust::year_2015::day_05::{is_nice_word, is_nice_word2};
 use advent_code_rust::year_2015::day_06::{DimmableBulb, LightGrid, LightInstruction, SimpleBulb};
 use advent_code_rust::year_2015::day_07::Circuit;
 use advent_code_rust::year_2015::day_08::{escape_string, reformat_string};
+use advent_code_rust::year_2015::day_09::{Edge, Graph};
 use advent_code_rust::year_2015::day_10::look_and_say;
 use advent_code_rust::year_2015::day_11::next_password;
 use advent_code_rust::year_2015::day_12::{sum_numbers_in_str, sum_value};
@@ -22,6 +23,7 @@ fn main() {
     run_2015_06();
     run_2015_07();
     run_2015_08();
+    run_2015_09();
     run_2015_10();
     run_2015_11();
     run_2015_12();
@@ -185,6 +187,24 @@ fn run_2015_08() {
     let after: usize = contents.lines().map(|s| escape_string(s).len()).sum();
 
     println!("The difference between the newly encoded string characters and the string literals characters is {} characters.", after - before);
+}
+
+fn run_2015_09() {
+    println!("Advent of Code 2015 - Day 9");
+    let contents =
+        std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+
+    let mut graph = Graph::new();
+    for line in contents.lines() {
+        let edge = Edge::from_str(line).unwrap();
+        graph.add_edge(edge);
+    }
+
+    let min = graph.shortest_path();
+    println!("The distance of the shortest route is {}.", min);
+
+    let max = graph.longest_path();
+    println!("The distance of the longest route is {}.", max);
 }
 
 fn run_2015_10() {
