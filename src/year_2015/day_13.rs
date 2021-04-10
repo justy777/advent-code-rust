@@ -6,7 +6,7 @@ use std::str::FromStr;
 use itertools::Itertools;
 
 pub struct SeatingPlan {
-    guests: HashSet<String>,
+    pub guests: HashSet<String>,
     preferences: HashMap<[String; 2], i32>,
 }
 
@@ -175,4 +175,35 @@ fn test_happiest_table_input_file() {
 
     let max = plan.happiest_table();
     assert_eq!(max, 664);
+}
+
+#[test]
+fn test_happiest_table_input_file_and_you() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-13.txt").expect("Failed to read file to string.");
+
+    let mut plan = SeatingPlan::new();
+    contents
+        .lines()
+        .map(|line| SeatingPreference::from_str(line).unwrap())
+        .for_each(|preference| plan.add_preference(preference));
+
+    for guest in plan.guests.clone() {
+        let s = format!(
+            "You would gain 0 happiness units by sitting next to {}.",
+            guest
+        );
+        let preference = SeatingPreference::from_str(&s).unwrap();
+        plan.add_preference(preference);
+
+        let s = format!(
+            "{} would gain 0 happiness units by sitting next to You.",
+            guest
+        );
+        let preference = SeatingPreference::from_str(&s).unwrap();
+        plan.add_preference(preference);
+    }
+
+    let max = plan.happiest_table();
+    assert_eq!(max, 640)
 }

@@ -267,4 +267,23 @@ fn run_2015_13() {
         "The total change in happiness for the optimal seating arrangement is {}.",
         max
     );
+
+    for guest in plan.guests.clone() {
+        let s = format!(
+            "You would gain 0 happiness units by sitting next to {}.",
+            guest
+        );
+        let preference = SeatingPreference::from_str(&s).unwrap();
+        plan.add_preference(preference);
+
+        let s = format!(
+            "{} would gain 0 happiness units by sitting next to You.",
+            guest
+        );
+        let preference = SeatingPreference::from_str(&s).unwrap();
+        plan.add_preference(preference);
+    }
+
+    let max = plan.happiest_table();
+    println!("The total change in happiness for the optimal seating arrangement that actually includes yourself is {}", max);
 }
