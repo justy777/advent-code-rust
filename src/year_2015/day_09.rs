@@ -1,7 +1,7 @@
 use std::collections::{HashMap, HashSet};
+use std::str::FromStr;
 
 use itertools::Itertools;
-use std::str::FromStr;
 
 pub struct Graph {
     vertices: HashSet<String>,
@@ -124,10 +124,10 @@ fn test_shortest_path_input_file() {
         std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
-    for line in contents.lines() {
-        let edge = Edge::from_str(line).unwrap();
-        graph.add_edge(edge);
-    }
+    contents
+        .lines()
+        .map(|line| Edge::from_str(line).unwrap())
+        .for_each(|edge| graph.add_edge(edge));
 
     let min = graph.shortest_path();
     assert_eq!(min, 207);
@@ -139,10 +139,10 @@ fn test_longest_path_input_file() {
         std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
-    for line in contents.lines() {
-        let edge = Edge::from_str(line).unwrap();
-        graph.add_edge(edge);
-    }
+    contents
+        .lines()
+        .map(|line| Edge::from_str(line).unwrap())
+        .for_each(|edge| graph.add_edge(edge));
 
     let max = graph.longest_path();
     assert_eq!(max, 804);

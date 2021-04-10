@@ -195,10 +195,10 @@ fn run_2015_09() {
         std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
-    for line in contents.lines() {
-        let edge = Edge::from_str(line).unwrap();
-        graph.add_edge(edge);
-    }
+    contents
+        .lines()
+        .map(|line| Edge::from_str(line).unwrap())
+        .for_each(|edge| graph.add_edge(edge));
 
     let min = graph.shortest_path();
     println!("The distance of the shortest route is {}.", min);
