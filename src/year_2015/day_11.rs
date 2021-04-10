@@ -56,7 +56,7 @@ fn is_password(s: &[u8]) -> bool {
     contains_increasing_straight_of_three(s) && !contains_forbidden_char(s) && contains_two_pairs(s)
 }
 
-fn next_password(old_password: &str) -> String {
+pub fn next_password(old_password: &str) -> String {
     let mut password = Vec::from(old_password);
     if let Some(start_position) = password.iter().position(|c| "iol".as_bytes().contains(c)) {
         password[start_position] = rotate_letter(password[start_position], 1);
@@ -93,13 +93,13 @@ fn test2() {
 }
 
 #[test]
-fn test_year_2015_day_11() {
-    println!("Advent of Code 2015 - Day 11");
+fn test_next_password_input() {
     let new_password = next_password("cqjxjnds");
-    println!("His next password should be {}.", new_password);
     assert_eq!(new_password, "cqjxxyzz");
+}
 
+#[test]
+fn test_next_password_input2() {
     let new_password = next_password("cqjxxyzz");
-    println!("The next one is {}.", new_password);
     assert_eq!(new_password, "cqkaabcc");
 }

@@ -1,5 +1,3 @@
-use std::fs;
-
 fn count_vowels(s: &str) -> usize {
     lazy_static! {
         static ref VOWELS: &'static str = "aeiou";
@@ -35,7 +33,7 @@ fn contains_forbidden_str(s: &str) -> bool {
     FORBIDDEN_STRINGS.iter().any(|x| s.contains(x))
 }
 
-fn is_nice_word(s: &str) -> bool {
+pub fn is_nice_word(s: &str) -> bool {
     count_vowels(s) >= 3 && contains_double_letter(s) && !contains_forbidden_str(s)
 }
 
@@ -69,7 +67,7 @@ fn contains_letter_that_repeats_with_letter_between(s: &str) -> bool {
     found
 }
 
-fn is_nice_word2(s: &str) -> bool {
+pub fn is_nice_word2(s: &str) -> bool {
     contains_pair_of_letters_twice(s) && contains_letter_that_repeats_with_letter_between(s)
 }
 
@@ -91,22 +89,19 @@ fn test_is_nice_word2() {
 }
 
 #[test]
-fn test_2015_day_5() {
-    println!("Advent of Code 2015 - Day 5");
+fn test_is_nice_word_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
 
     let nice_word_count = contents.lines().filter(|word| is_nice_word(word)).count();
-    println!(
-        "There are {} nice words with the first set of rules.",
-        nice_word_count
-    );
     assert_eq!(nice_word_count, 236);
+}
+
+#[test]
+fn test_is_nice_word2_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
 
     let nice_word_count = contents.lines().filter(|word| is_nice_word2(word)).count();
-    println!(
-        "There are {} nice words with the second set of rules.",
-        nice_word_count
-    );
     assert_eq!(nice_word_count, 51);
 }

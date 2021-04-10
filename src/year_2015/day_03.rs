@@ -1,5 +1,3 @@
-use std::fs;
-
 use hashbrown::HashSet;
 
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone)]
@@ -120,27 +118,27 @@ fn test_grid_two_positions() {
 }
 
 #[test]
-fn test_2015_day_3() {
-    println!("Advent of Code 2015 - Day 3");
+fn test_grid_single_position_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
 
     let mut grid = InfiniteGrid::new(1);
 
     contents.chars().for_each(|c| grid.move_position(c));
 
     let houses_visited = grid.position_count();
-    println!("Santa visited {} houses at least once.", houses_visited);
     assert_eq!(houses_visited, 2081);
+}
+
+#[test]
+fn test_grid_two_positions_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
 
     let mut grid = InfiniteGrid::new(2);
 
     contents.chars().for_each(|c| grid.move_position(c));
 
     let houses_visited = grid.position_count();
-    println!(
-        "Santa and Robo-Santa visited {} houses at least once.",
-        houses_visited
-    );
     assert_eq!(houses_visited, 2341);
 }

@@ -1,7 +1,7 @@
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
-use std::{cmp, fmt, fs};
+use std::{cmp, fmt};
 
 use rayon::prelude::*;
 use regex::Regex;
@@ -120,10 +120,9 @@ fn test_present_from_str_zero() {
 }
 
 #[test]
-fn test_2015_day_2() {
-    println!("Advent of Code 2015 - Day 2");
+fn test_wrapping_paper_needed_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents
         .par_lines()
@@ -135,17 +134,23 @@ fn test_2015_day_2() {
         .map(|present| present.wrapping_paper_needed())
         .sum();
 
-    println!(
-        "The elves need {} square feet of wrapping paper.",
-        wrapping_paper_needed
-    );
     assert_eq!(wrapping_paper_needed, 1586300);
+}
+
+#[test]
+fn test_ribbon_needed_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
+
+    let presents: Vec<Present> = contents
+        .par_lines()
+        .map(|line| Present::from_str(line).unwrap())
+        .collect();
 
     let ribbon_needed: u32 = presents
         .par_iter()
         .map(|present| present.ribbon_needed())
         .sum();
 
-    println!("The elves need {} feet of ribbon.", ribbon_needed);
     assert_eq!(ribbon_needed, 3737498);
 }

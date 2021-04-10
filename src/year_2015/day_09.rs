@@ -1,5 +1,4 @@
 use std::collections::{HashMap, HashSet};
-use std::fs;
 
 use itertools::Itertools;
 
@@ -85,7 +84,7 @@ fn test_longest_path() {
 fn test_year_2015_day_9() {
     println!("Advent of Code 2015 - Day 9");
     let contents =
-        fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
     for line in contents.lines() {

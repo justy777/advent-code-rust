@@ -51,21 +51,16 @@ fn test_find_md5_hash_with_five_leading_zeroes() {
 }
 
 #[test]
-fn test_2015_day_4() {
-    println!("Advent of Code 2015 - Day 4");
+fn test_find_md5_with_five_leading_zeroes_input() {
     let key = "iwrupvqb";
 
     let second_half_of_key = find_md5_hash_leading_zeroes(key.as_bytes(), 5).unwrap();
-    println!(
-        "The secret key is {}, and the answer is {} for an MD5 hash with five leading zeroes.",
-        key, second_half_of_key
-    );
     assert_eq!(second_half_of_key, 346386);
+}
+#[test]
+fn test_find_md5_with_six_leading_zeroes_input() {
+    let key = "iwrupvqb";
 
     let second_half_of_key = find_md5_hash_leading_zeroes(key.as_bytes(), 6).unwrap();
-    println!(
-        "The secret key is {}, and the answer is {} for an MD5 hash with six leading zeroes.",
-        key, second_half_of_key
-    );
     assert_eq!(second_half_of_key, 9958218);
 }

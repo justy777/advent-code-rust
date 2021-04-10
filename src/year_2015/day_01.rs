@@ -1,5 +1,3 @@
-use std::fs;
-
 struct Counter {
     count: i32,
     operations: i32,
@@ -94,22 +92,19 @@ fn test_apply_bad_input() {
 }
 
 #[test]
-fn test_2015_day_1() {
-    println!("Advent of Code 2015 - Day 1");
+fn test_calculate_final_count_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-1.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-1.txt").expect("Failed to read file to string.");
 
     let destination_floor = calculate_final_count(&contents);
-    println!(
-        "The instructions take Santa to floor {}.",
-        destination_floor
-    );
     assert_eq!(destination_floor, 280);
+}
+
+#[test]
+fn test_test_calculate_operations_to_value_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-1.txt").expect("Failed to read file to string.");
 
     let first_basement_position = calculate_operations_to_value(&contents, -1);
-    println!(
-        "The first position on floor -1 is {}.",
-        first_basement_position
-    );
     assert_eq!(first_basement_position, 1797);
 }

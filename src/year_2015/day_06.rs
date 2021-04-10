@@ -1,6 +1,6 @@
 use std::error::Error;
+use std::fmt;
 use std::fmt::{Display, Formatter};
-use std::{fmt, fs};
 
 use regex::Regex;
 
@@ -15,7 +15,7 @@ enum Operation {
     TurnOff,
 }
 
-trait State: Clone + Default {
+pub trait State: Clone + Default {
     fn toggle(&mut self);
 
     fn turn_on(&mut self);
@@ -26,7 +26,7 @@ trait State: Clone + Default {
 }
 
 #[derive(Clone, Default)]
-struct SimpleBulb {
+pub struct SimpleBulb {
     state: bool,
 }
 
@@ -53,7 +53,7 @@ impl State for SimpleBulb {
 }
 
 #[derive(Clone, Default)]
-struct DimmableBulb {
+pub struct DimmableBulb {
     state: i32,
 }
 
@@ -77,20 +77,20 @@ impl State for DimmableBulb {
     }
 }
 
-struct LightGrid<T: State> {
+pub struct LightGrid<T: State> {
     lights: Vec<Vec<T>>,
 }
 
 const GRID_CAPACITY: usize = 1000;
 
 impl<T: State> LightGrid<T> {
-    fn new() -> LightGrid<T> {
+    pub fn new() -> LightGrid<T> {
         LightGrid {
             lights: vec![vec![T::default(); GRID_CAPACITY]; GRID_CAPACITY],
         }
     }
 
-    fn total_brightness(&self) -> i32 {
+    pub fn total_brightness(&self) -> i32 {
         let mut count = 0;
         for x in 0..GRID_CAPACITY {
             for y in 0..GRID_CAPACITY {
@@ -112,7 +112,7 @@ impl<T: State> LightGrid<T> {
         }
     }
 
-    fn follow_instruction(&mut self, instruction: &str) -> Result<(), ParseInstructionError> {
+    pub fn follow_instruction(&mut self, instruction: &str) -> Result<(), ParseInstructionError> {
         lazy_static! {
             static ref REGEX: Regex = Regex::new(r"^(?P<operation>toggle|turn on|turn off) (?P<x1>\d{1,3}),(?P<y1>\d{1,3}) through (?P<x2>\d{1,3}),(?P<y2>\d{1,3})$").unwrap();
         }
@@ -143,6 +143,12 @@ impl<T: State> LightGrid<T> {
     }
 }
 
+impl<T: State> Default for LightGrid<T> {
+    fn default() -> Self {
+        LightGrid::new()
+    }
+}
+
 #[test]
 fn test_light_grid_follow_instruction_bad_input() {
     let mut grid = LightGrid::<SimpleBulb>::new();
@@ -168,7 +174,7 @@ fn test_light_grid_follow_instruction_bad_input() {
 }
 
 #[derive(Debug)]
-struct ParseInstructionError {
+pub struct ParseInstructionError {
     pub(super) _priv: (),
 }
 
@@ -209,24 +215,27 @@ fn test_light_grid_increase_brightness() {
 }
 
 #[test]
-fn test_2015_day_6() {
-    println!("Advent of Code 2015 - Day 6");
+fn test_simple_bulbs_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
         .lines()
         .for_each(|line| grid.follow_instruction(line).unwrap());
     let lit_lights_count = grid.total_brightness();
-    println!("There are {} lights lit.", lit_lights_count);
     assert_eq!(lit_lights_count, 543903);
+}
+
+#[test]
+fn test_dimmable_bulbs_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
     let mut grid = LightGrid::<DimmableBulb>::new();
     contents
         .lines()
         .for_each(|line| grid.follow_instruction(line).unwrap());
     let total_brightness = grid.total_brightness();
-    println!("The total brightness is {}.", total_brightness);
     assert_eq!(total_brightness, 14687245);
 }

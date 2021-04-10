@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::fs;
 
 #[derive(Clone)]
 enum Endpoint {
@@ -27,31 +26,35 @@ enum Gate {
     RightShift(Endpoint, u16),
 }
 
-struct Circuit {
+pub struct Circuit {
     parts: HashMap<String, Gate>,
     signals: HashMap<String, u16>,
 }
 
 impl Circuit {
-    fn new() -> Circuit {
+    pub fn new() -> Circuit {
         Circuit {
             parts: HashMap::new(),
             signals: HashMap::new(),
         }
     }
 
+    pub fn signal(&self, wire: &str) -> Option<&u16> {
+        self.signals.get(wire)
+    }
+
     fn add_gate(&mut self, name: String, gate: Gate) {
         self.parts.insert(name, gate);
     }
 
-    fn resolve_circuit(&mut self) {
+    pub fn resolve_circuit(&mut self) {
         let parts = self.parts.clone();
         parts.keys().for_each(|key| {
             self.resolve_signal(key);
         });
     }
 
-    fn reset_circuit(&mut self) {
+    pub fn reset_circuit(&mut self) {
         self.signals = HashMap::new();
     }
 
@@ -79,7 +82,7 @@ impl Circuit {
         }
     }
 
-    fn follow_instruction(&mut self, instruction: &str) {
+    pub fn follow_instruction(&mut self, instruction: &str) {
         if instruction.contains("AND") {
             let mut iter = instruction.split(' ');
             let operand1 = Endpoint::from(iter.next().unwrap());
@@ -129,6 +132,12 @@ impl Circuit {
     }
 }
 
+impl Default for Circuit {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[test]
 fn test_small_circuit() {
     let mut circuit = Circuit::new();
@@ -154,10 +163,9 @@ fn test_small_circuit() {
 }
 
 #[test]
-fn test_2015_day_7() {
-    println!("Advent of Code 2015 - Day 7");
+fn test_circuit_resolve_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
     contents
@@ -165,17 +173,23 @@ fn test_2015_day_7() {
         .for_each(|line| circuit.follow_instruction(line));
     circuit.resolve_circuit();
 
-    let signal_a = circuit.signals.get("a").unwrap();
-    println!("The signal {} is provided to wire 'a'.", signal_a);
+    let signal_a = circuit.signal("a").unwrap();
     assert_eq!(signal_a, &16076);
+}
 
-    circuit.reset_circuit();
-    circuit
-        .parts
-        .insert(String::from("b"), Gate::NoOp(Endpoint::Source(16076)));
+#[test]
+fn test_circuit_resolve_input_file_and_extra_instruction() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
+
+    let mut circuit = Circuit::new();
+    contents
+        .lines()
+        .for_each(|line| circuit.follow_instruction(line));
+
+    circuit.follow_instruction("16076 -> b");
     circuit.resolve_circuit();
 
-    let signal_a = circuit.signals.get("a").unwrap();
-    println!("The signal {} is provided to wire 'a'.", signal_a);
+    let signal_a = circuit.signal("a").unwrap();
     assert_eq!(signal_a, &2797);
 }

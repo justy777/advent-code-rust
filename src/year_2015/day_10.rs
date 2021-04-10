@@ -10,7 +10,7 @@ fn get_count(s: &[u8], c: &u8) -> usize {
     count
 }
 
-fn look_and_say(number: &str) -> String {
+pub fn look_and_say(number: &str) -> String {
     let mut result: Vec<u8> = Vec::new();
 
     let bytes = number.as_bytes();
@@ -53,24 +53,23 @@ fn test_look_and_say() {
 }
 
 #[test]
-fn test_year_2015_day_10() {
-    println!("Advent of Code 2015 - Day 10");
-
+fn test_look_and_say_input_40_times() {
     let mut input = String::from("1113122113");
     for _ in 0..40 {
         input = look_and_say(&input);
     }
 
     let length = input.len();
-    println!("The length of the result is {}.", length);
     assert_eq!(length, 360154);
+}
 
+#[test]
+fn test_look_and_say_input_50_times() {
     let mut input = String::from("1113122113");
     for _ in 0..50 {
         input = look_and_say(&input);
     }
 
     let length = input.len();
-    println!("The length of the new result is {}.", length);
     assert_eq!(length, 5103798);
 }

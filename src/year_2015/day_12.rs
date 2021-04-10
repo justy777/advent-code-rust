@@ -1,9 +1,7 @@
-use std::fs;
-
 use regex::Regex;
 use serde_json::Value;
 
-fn sum_numbers_in_str(s: &str) -> i32 {
+pub fn sum_numbers_in_str(s: &str) -> i32 {
     lazy_static! {
         static ref REGEX: Regex = Regex::new(r"-?\d+").unwrap();
     }
@@ -13,7 +11,7 @@ fn sum_numbers_in_str(s: &str) -> i32 {
         .sum()
 }
 
-fn sum_value(value: &Value) -> i64 {
+pub fn sum_value(value: &Value) -> i64 {
     match value {
         Value::Null => 0,
         Value::Bool(_) => 0,
@@ -83,16 +81,19 @@ fn test_sum_value() {
 
 #[test]
 fn test_year_2015_day_12() {
-    println!("Advent of Code 2015 - Day 12");
     let contents =
-        fs::read_to_string("input/2015/day-12.txt").expect("Failed to read file to string.");
+        std::fs::read_to_string("input/2015/day-12.txt").expect("Failed to read file to string.");
 
     let sum = sum_numbers_in_str(&contents);
-    println!("The sum of all the numbers in the document is {}.", sum);
     assert_eq!(sum, 156366);
+}
+
+#[test]
+fn test_test_sum_value_input_file() {
+    let contents =
+        std::fs::read_to_string("input/2015/day-12.txt").expect("Failed to read file to string.");
 
     let value = serde_json::from_str(&contents).unwrap();
     let sum = sum_value(&value);
-    println!("The sum of the numbers without red objects is {}.", sum);
     assert_eq!(sum, 96852);
 }
