@@ -13,6 +13,7 @@ use advent_code_rust::year_2015::day_09::{Edge, Graph};
 use advent_code_rust::year_2015::day_10::look_and_say;
 use advent_code_rust::year_2015::day_11::next_password;
 use advent_code_rust::year_2015::day_12::{sum_numbers_in_str, sum_value};
+use advent_code_rust::year_2015::day_13::{SeatingPlan, SeatingPreference};
 
 fn main() {
     run_2015_01();
@@ -27,6 +28,7 @@ fn main() {
     run_2015_10();
     run_2015_11();
     run_2015_12();
+    run_2015_13();
 }
 
 fn run_2015_01() {
@@ -247,4 +249,22 @@ fn run_2015_12() {
     let value = serde_json::from_str(&contents).unwrap();
     let sum = sum_value(&value);
     println!("The sum of the numbers without red objects is {}.", sum);
+}
+
+fn run_2015_13() {
+    println!("Advent of Code 2015 - Day 13");
+    let contents =
+        std::fs::read_to_string("input/2015/day-13.txt").expect("Failed to read file to string.");
+
+    let mut plan = SeatingPlan::new();
+    contents
+        .lines()
+        .map(|line| SeatingPreference::from_str(line).unwrap())
+        .for_each(|preference| plan.add_preference(preference));
+
+    let max = plan.happiest_table();
+    println!(
+        "The total change in happiness for the optimal seating arrangement is {}.",
+        max
+    );
 }
