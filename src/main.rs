@@ -14,7 +14,9 @@ use advent_code_rust::year_2015::day_10::look_and_say;
 use advent_code_rust::year_2015::day_11::next_password;
 use advent_code_rust::year_2015::day_12::{sum_numbers_in_str, sum_value};
 use advent_code_rust::year_2015::day_13::{SeatingPlan, SeatingPreference};
-use advent_code_rust::year_2015::day_14::{Reindeer, distance_winning_reindeer_traveled};
+use advent_code_rust::year_2015::day_14::{
+    distance_winning_reindeer_traveled, points_awarded_winning_reindeer, Reindeer,
+};
 
 fn main() {
     run_2015_01();
@@ -302,4 +304,7 @@ fn run_2015_14() {
 
     let max = distance_winning_reindeer_traveled(&reindeer, 2503);
     println!("The winning reindeer has travelled {} km.", max);
+
+    let max = points_awarded_winning_reindeer(&reindeer, 2503);
+    println!("The winning reindeer has {} points.", max);
 }
