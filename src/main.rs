@@ -14,6 +14,7 @@ use advent_code_rust::year_2015::day_10::look_and_say;
 use advent_code_rust::year_2015::day_11::next_password;
 use advent_code_rust::year_2015::day_12::{sum_numbers_in_str, sum_value};
 use advent_code_rust::year_2015::day_13::{SeatingPlan, SeatingPreference};
+use advent_code_rust::year_2015::day_14::{Reindeer, distance_winning_reindeer_traveled};
 
 fn main() {
     run_2015_01();
@@ -29,6 +30,7 @@ fn main() {
     run_2015_11();
     run_2015_12();
     run_2015_13();
+    run_2015_14();
 }
 
 fn run_2015_01() {
@@ -286,4 +288,18 @@ fn run_2015_13() {
 
     let max = plan.happiest_table();
     println!("The total change in happiness for the optimal seating arrangement that actually includes yourself is {}", max);
+}
+
+fn run_2015_14() {
+    println!("Advent of Code 2015 - Day 13");
+    let contents =
+        std::fs::read_to_string("input/2015/day-14.txt").expect("Failed to read file to string.");
+
+    let reindeer: Vec<Reindeer> = contents
+        .lines()
+        .map(|line| Reindeer::from_str(line).unwrap())
+        .collect();
+
+    let max = distance_winning_reindeer_traveled(&reindeer, 2503);
+    println!("The winning reindeer has travelled {} km.", max);
 }
