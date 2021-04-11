@@ -1,7 +1,15 @@
 use std::str;
 
-fn rotate_letter(c: u8, n: u8) -> u8 {
-    (((c - b'a') + n) % 26) + b'a'
+fn rotate_letters(letters: &mut [u8]) {
+    let mut first = true;
+    for letter in letters {
+        if first {
+            *letter = (((*letter - b'a') + 1) % 26) + b'a';
+            first = false;
+        } else {
+            *letter = b'a';
+        }
+    }
 }
 
 fn contains_increasing_straight_of_three(s: &[u8]) -> bool {
@@ -59,35 +67,25 @@ fn is_password(s: &[u8]) -> bool {
 pub fn next_password(old_password: &str) -> String {
     let mut password = Vec::from(old_password);
     if let Some(start_position) = password.iter().position(|c| "iol".as_bytes().contains(c)) {
-        password[start_position] = rotate_letter(password[start_position], 1);
-        for letter in password.iter_mut().skip(start_position + 1) {
-            *letter = b'a';
-        }
+        rotate_letters(&mut password[start_position..]);
     };
-    let mut position = password.len() - 1;
+
     while !is_password(&password) || old_password.as_bytes() == password.as_slice() {
-        let letter = rotate_letter(password[position], 1);
-        password[position] = letter;
-        if letter == b'z' {
-            position -= 1;
-            continue;
-        }
-        if position < old_password.len() - 1 {
-            position += 1;
-        }
+        let position = password.iter().rposition(|letter| letter != &b'z').unwrap();
+        rotate_letters(&mut password[position..]);
     }
 
     String::from_utf8(password).unwrap()
 }
 
 #[test]
-fn test1() {
+fn test_next_password() {
     let new_password = next_password("abcdefgh");
     assert_eq!(new_password, "abcdffaa");
 }
 
 #[test]
-fn test2() {
+fn test_next_password_forbidden_letter() {
     let new_password = next_password("ghijklmn");
     assert_eq!(new_password, "ghjaabcc");
 }
