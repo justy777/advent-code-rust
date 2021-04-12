@@ -38,7 +38,7 @@ fn main() {
 fn run_2015_01() {
     println!("Advent of Code 2015 - Day 1");
     let contents =
-        fs::read_to_string("input/2015/day-1.txt").expect("Failed to read file to string.");
+        fs::read("input/2015/day-1.txt").expect("Failed to read file to string.");
 
     let destination_floor = calculate_final_count(&contents);
     println!(
@@ -293,7 +293,7 @@ fn run_2015_13() {
 }
 
 fn run_2015_14() {
-    println!("Advent of Code 2015 - Day 13");
+    println!("Advent of Code 2015 - Day 14");
     let contents =
         std::fs::read_to_string("input/2015/day-14.txt").expect("Failed to read file to string.");
 
