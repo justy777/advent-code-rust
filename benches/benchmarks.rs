@@ -1,4 +1,4 @@
-use advent_code_rust::year_2015::day_01::{calculate_final_count, calculate_operations_to_value};
+use advent_of_code::year_2015::day_01::{calculate_final_count, calculate_operations_to_value};
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 pub fn criterion_benchmark(c: &mut Criterion) {

@@ -1,20 +1,20 @@
 use std::fs;
 use std::str::FromStr;
 
-use advent_code_rust::year_2015::day_01::{calculate_final_count, calculate_operations_to_value};
-use advent_code_rust::year_2015::day_02::Present;
-use advent_code_rust::year_2015::day_03::InfiniteGrid;
-use advent_code_rust::year_2015::day_04::find_md5_hash_leading_zeroes;
-use advent_code_rust::year_2015::day_05::{is_nice_word, is_nice_word2};
-use advent_code_rust::year_2015::day_06::{DimmableBulb, LightGrid, LightInstruction, SimpleBulb};
-use advent_code_rust::year_2015::day_07::Circuit;
-use advent_code_rust::year_2015::day_08::{escape_string, reformat_string};
-use advent_code_rust::year_2015::day_09::{Edge, Graph};
-use advent_code_rust::year_2015::day_10::look_and_say;
-use advent_code_rust::year_2015::day_11::next_password;
-use advent_code_rust::year_2015::day_12::{sum_numbers_in_str, sum_value};
-use advent_code_rust::year_2015::day_13::{SeatingPlan, SeatingPreference};
-use advent_code_rust::year_2015::day_14::{
+use advent_of_code::year_2015::day_01::{calculate_final_count, calculate_operations_to_value};
+use advent_of_code::year_2015::day_02::Present;
+use advent_of_code::year_2015::day_03::InfiniteGrid;
+use advent_of_code::year_2015::day_04::find_md5_hash_leading_zeroes;
+use advent_of_code::year_2015::day_05::{is_nice_word, is_nice_word2};
+use advent_of_code::year_2015::day_06::{DimmableBulb, LightGrid, LightInstruction, SimpleBulb};
+use advent_of_code::year_2015::day_07::Circuit;
+use advent_of_code::year_2015::day_08::{escape_string, reformat_string};
+use advent_of_code::year_2015::day_09::{Edge, Graph};
+use advent_of_code::year_2015::day_10::look_and_say;
+use advent_of_code::year_2015::day_11::next_password;
+use advent_of_code::year_2015::day_12::{sum_numbers_in_str, sum_value};
+use advent_of_code::year_2015::day_13::{SeatingPlan, SeatingPreference};
+use advent_of_code::year_2015::day_14::{
     distance_winning_reindeer_traveled, points_awarded_winning_reindeer, Reindeer,
 };
 
