@@ -47,8 +47,9 @@ fn run_2015_01() {
     println!("The Santa enters the basement at position {}.", p);
 }
 
+/// Displays the solutions to Year 2015 Day 2: I Was Told There Would Be No Math.
 fn run_2015_02() {
-    println!("Advent of Code 2015 - Day 2");
+    println!("Advent of Code - Year 2015 Day 2: I Was Told There Would Be No Math");
     let contents =
         fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
 

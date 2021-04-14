@@ -1,3 +1,9 @@
+/*!
+--- Day 2: I Was Told There Would Be No Math ---
+The elves are running low on wrapping paper, and so they need to submit an order for more.
+They have a list of the dimensions of each present, and only want to order exactly as much as they need.
+*/
+
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
@@ -5,13 +11,28 @@ use std::{cmp, fmt};
 
 use regex::Regex;
 
+/// Represents the dimensions of a present in feet.
+#[derive(Debug)]
 pub struct Present {
-    length: u32,
-    width: u32,
-    height: u32,
+    pub length: u32,
+    pub width: u32,
+    pub height: u32,
 }
 
 impl Present {
+    /// Calculates the wrapping paper needed to wrap the present in square feet.
+    ///
+    /// The wrapping paper needed is the surface area of the box plus the area of the smallest side.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use advent_of_code::year_2015::day_02::Present;
+    ///
+    /// let present = Present { length: 2, width: 3, height: 4 };
+    /// let paper = present.wrapping_paper_needed();
+    /// assert_eq!(paper, 58);
+    /// ```
     pub fn wrapping_paper_needed(&self) -> u32 {
         let area_1 = self.length * self.width;
         let area_2 = self.width * self.height;
@@ -22,25 +43,27 @@ impl Present {
         (2 * (area_1 + area_2 + area_3)) + min_area
     }
 
+    /// Calculates the ribbon needed to wrap the present in feet.
+    /// Ribbon is all the same width, so you only need to worry about the length.
+    ///
+    /// The ribbon required to wrap a present is the shortest distance around its sides, or the smallest perimeter of any one face.
+    /// Each present also requires a bow made out of ribbon as well; the feet of ribbon required for the perfect bow is equal to the cubic feet of volume of the present.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use advent_of_code::year_2015::day_02::Present;
+    ///
+    /// let present = Present { length: 2, width: 3, height: 4 };
+    /// let ribbon = present.ribbon_needed();
+    /// assert_eq!(ribbon, 34);
+    /// ```
     pub fn ribbon_needed(&self) -> u32 {
         let needed_for_bow = self.length * self.width * self.height;
         let max = cmp::max(self.length, cmp::max(self.width, self.height));
         let smallest_perimeter = 2 * (self.length + self.width + self.height - max);
 
         smallest_perimeter + needed_for_bow
-    }
-}
-
-#[derive(Debug)]
-pub struct ParsePresentError {
-    pub(super) _priv: (),
-}
-
-impl Error for ParsePresentError {}
-
-impl Display for ParsePresentError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        "provided string was not in format '{length}x{width}x{height}'".fmt(f)
     }
 }
 
@@ -67,6 +90,20 @@ impl FromStr for Present {
             }
             None => Err(ParsePresentError { _priv: () }),
         }
+    }
+}
+
+/// Error type used when parsing a present from a `str`.
+#[derive(Debug)]
+pub struct ParsePresentError {
+    pub(super) _priv: (),
+}
+
+impl Error for ParsePresentError {}
+
+impl Display for ParsePresentError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        "provided string was not in format '{length}x{width}x{height}'".fmt(f)
     }
 }
 
