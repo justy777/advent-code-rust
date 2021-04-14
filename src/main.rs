@@ -4,7 +4,7 @@ use std::str::FromStr;
 use advent_of_code::year_2015::day_01::{floor, position};
 use advent_of_code::year_2015::day_02::Present;
 use advent_of_code::year_2015::day_03::InfiniteGrid;
-use advent_of_code::year_2015::day_04::find_md5_hash_leading_zeroes;
+use advent_of_code::year_2015::day_04::find_number;
 use advent_of_code::year_2015::day_05::{is_nice_word, is_nice_word2};
 use advent_of_code::year_2015::day_06::{DimmableBulb, LightGrid, LightInstruction, SimpleBulb};
 use advent_of_code::year_2015::day_07::Circuit;
@@ -97,20 +97,21 @@ fn run_2015_03() {
     );
 }
 
+/// Displays the solutions to Year 2015 Day 4: The Ideal Stocking Stuffer.
 fn run_2015_04() {
-    println!("Advent of Code 2015 - Day 4");
+    println!("Advent of Code - Year 2015 Day 4: The Ideal Stocking Stuffer");
     let key = "iwrupvqb";
 
-    let second_half_of_key = find_md5_hash_leading_zeroes(key.as_bytes(), 5).unwrap();
+    let number = find_number(key.as_bytes(), 5).unwrap();
     println!(
-        "The secret key is {}, and the answer is {} for an MD5 hash with five leading zeroes.",
-        key, second_half_of_key
+        "The secret key is {}{} for an MD5 hash with five leading zeroes.",
+        key, number
     );
 
-    let second_half_of_key = find_md5_hash_leading_zeroes(key.as_bytes(), 6).unwrap();
+    let number = find_number(key.as_bytes(), 6).unwrap();
     println!(
-        "The secret key is {}, and the answer is {} for an MD5 hash with six leading zeroes.",
-        key, second_half_of_key
+        "The secret key is {}{} for an MD5 hash with six leading zeroes.",
+        key, number
     );
 }
 
