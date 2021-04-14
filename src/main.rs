@@ -73,8 +73,9 @@ fn run_2015_02() {
     println!("The elves need {} feet of ribbon.", ribbon_needed);
 }
 
+/// Displays the solutions to Year 2015 Day 3: Perfectly Spherical Houses in a Vacuum.
 fn run_2015_03() {
-    println!("Advent of Code 2015 - Day 3");
+    println!("Advent of Code - Year 2015 Day 3: Perfectly Spherical Houses in a Vacuum");
     let contents =
         fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
 
@@ -82,14 +83,14 @@ fn run_2015_03() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.position_count();
+    let houses_visited = grid.visited();
     println!("Santa visited {} houses at least once.", houses_visited);
 
     let mut grid = InfiniteGrid::new(2);
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.position_count();
+    let houses_visited = grid.visited();
     println!(
         "Santa and Robo-Santa visited {} houses at least once.",
         houses_visited

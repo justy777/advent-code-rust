@@ -1,5 +1,13 @@
+/*!
+--- Day 3: Perfectly Spherical Houses in a Vacuum ---
+Santa is delivering presents to an infinite two-dimensional grid of houses.
+He begins by delivering a present to the house at his starting location, and then an elf at the North Pole calls him via radio and tells him where to move next.
+However, the elf back at the north pole has had a little too much eggnog, and so his directions are a little off, and Santa ends up visiting some houses more than once.
+*/
+
 use hashbrown::HashSet;
 
+/// Represents a position in the grid.
 #[derive(Debug, Hash, Eq, PartialEq, Copy, Clone)]
 struct Position {
     x: i32,
@@ -7,10 +15,15 @@ struct Position {
 }
 
 impl Position {
+    /// Constructs a new `Position` at the origin (0,0).
     fn new() -> Position {
         Position { x: 0, y: 0 }
     }
 
+    /// Returns a new `Position` moved in the provided direction.
+    /// If an invalid direction is provided, `None` is returned.
+    ///
+    /// Moves are always exactly one to the north `^`, south `v`, east `>`, or west `<`.
     fn move_direction(&self, direction: char) -> Option<Position> {
         match direction {
             '^' => Some(Position {
@@ -34,6 +47,7 @@ impl Position {
     }
 }
 
+/// Represents an infinite grid of houses.
 pub struct InfiniteGrid {
     current_positions: Vec<Position>,
     past_positions: HashSet<Position>,
@@ -41,6 +55,16 @@ pub struct InfiniteGrid {
 }
 
 impl InfiniteGrid {
+    /// Constructs a new `InfiniteGrid` with the provided number of positions at the origin (0,0).
+    /// If parallel is more than one, positions will take turns moving.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use advent_of_code::year_2015::day_03::InfiniteGrid;
+    ///
+    /// let g = InfiniteGrid::new(1);
+    /// ```
     pub fn new(parallel: usize) -> InfiniteGrid {
         let mut past_positions = HashSet::new();
         past_positions.insert(Position::new());
@@ -51,6 +75,11 @@ impl InfiniteGrid {
         }
     }
 
+    /// Moves the current position in the provided direction.
+    ///
+    /// If parallel is more than one, positions will take turns moving.
+    ///
+    /// Moves are always exactly one house to the north `^`, south `v`, east `>`, or west `<`.
     pub fn move_position(&mut self, direction: char) {
         if self.current_positions.is_empty() {
             return;
@@ -65,7 +94,20 @@ impl InfiniteGrid {
         }
     }
 
-    pub fn position_count(&self) -> usize {
+    /// Returns the number of unique positions visited.
+    ///
+    /// The starting location counts as one visited position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use advent_of_code::year_2015::day_03::InfiniteGrid;
+    ///
+    /// let mut grid = InfiniteGrid::new(1);
+    /// grid.move_position('>');
+    /// assert_eq!(grid.visited(), 2);
+    /// ```
+    pub fn visited(&self) -> usize {
         self.past_positions.len()
     }
 }
@@ -91,30 +133,30 @@ fn test_grid_parallel_zero() {
 fn test_grid_single_position() {
     let mut grid = InfiniteGrid::new(1);
     grid.move_position('>');
-    assert_eq!(grid.position_count(), 2);
+    assert_eq!(grid.visited(), 2);
 
     let mut grid = InfiniteGrid::new(1);
     "^>v<".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.position_count(), 4);
+    assert_eq!(grid.visited(), 4);
 
     let mut grid = InfiniteGrid::new(1);
     "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.position_count(), 2);
+    assert_eq!(grid.visited(), 2);
 }
 
 #[test]
 fn test_grid_two_positions() {
     let mut grid = InfiniteGrid::new(2);
     "^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.position_count(), 3);
+    assert_eq!(grid.visited(), 3);
 
     let mut grid = InfiniteGrid::new(2);
     "^>v<".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.position_count(), 3);
+    assert_eq!(grid.visited(), 3);
 
     let mut grid = InfiniteGrid::new(2);
     "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.position_count(), 11);
+    assert_eq!(grid.visited(), 11);
 }
 
 #[test]
@@ -126,7 +168,7 @@ fn test_grid_single_position_input_file() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.position_count();
+    let houses_visited = grid.visited();
     assert_eq!(houses_visited, 2081);
 }
 
@@ -139,6 +181,6 @@ fn test_grid_two_positions_input_file() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.position_count();
+    let houses_visited = grid.visited();
     assert_eq!(houses_visited, 2341);
 }
