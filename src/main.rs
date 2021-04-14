@@ -1,7 +1,7 @@
 use std::fs;
 use std::str::FromStr;
 
-use advent_of_code::year_2015::day_01::{calculate_final_count, calculate_operations_to_value};
+use advent_of_code::year_2015::day_01::{floor, position};
 use advent_of_code::year_2015::day_02::Present;
 use advent_of_code::year_2015::day_03::InfiniteGrid;
 use advent_of_code::year_2015::day_04::find_md5_hash_leading_zeroes;
@@ -35,21 +35,16 @@ fn main() {
     run_2015_14();
 }
 
+/// Displays the solutions to Year 2015 Day 1: Not Quite Lisp.
 fn run_2015_01() {
-    println!("Advent of Code 2015 - Day 1");
-    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file to string.");
+    println!("Advent of Code - Year 2015 Day 1: Not Quite Lisp");
+    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file.");
 
-    let destination_floor = calculate_final_count(&contents);
-    println!(
-        "The instructions take Santa to floor {}.",
-        destination_floor
-    );
+    let f = floor(&contents);
+    println!("The instructions take Santa to floor {}.", f);
 
-    let first_basement_position = calculate_operations_to_value(&contents, -1);
-    println!(
-        "The first position on floor -1 is {}.",
-        first_basement_position
-    );
+    let p = position(&contents, -1).unwrap();
+    println!("The Santa enters the basement at position {}.", p);
 }
 
 fn run_2015_02() {
