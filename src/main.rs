@@ -6,7 +6,7 @@ use advent_of_code::year_2015::day_02::Present;
 use advent_of_code::year_2015::day_03::InfiniteGrid;
 use advent_of_code::year_2015::day_04::find_number;
 use advent_of_code::year_2015::day_05::{is_nice_word, is_nice_word2};
-use advent_of_code::year_2015::day_06::{DimmableBulb, LightGrid, LightInstruction, SimpleBulb};
+use advent_of_code::year_2015::day_06::{AdjustableBulb, LightGrid, LightInstruction, SimpleBulb};
 use advent_of_code::year_2015::day_07::Circuit;
 use advent_of_code::year_2015::day_08::{escape_string, reformat_string};
 use advent_of_code::year_2015::day_09::{Edge, Graph};
@@ -134,8 +134,9 @@ fn run_2015_05() {
     );
 }
 
+/// Displays the solutions to Year 2015 Day 6: Probably a Fire Hazard.
 fn run_2015_06() {
-    println!("Advent of Code 2015 - Day 6");
+    println!("Advent of Code - Year 2015 Day 6: Probably a Fire Hazard");
     let contents =
         fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
@@ -144,16 +145,16 @@ fn run_2015_06() {
         .lines()
         .map(|line| LightInstruction::from_str(line).unwrap())
         .for_each(|instruction| grid.apply_operation(instruction));
-    let lit_lights_count = grid.total_brightness();
-    println!("There are {} lights lit.", lit_lights_count);
+    let count = grid.total_brightness();
+    println!("There are {} lights lit.", count);
 
-    let mut grid = LightGrid::<DimmableBulb>::new();
+    let mut grid = LightGrid::<AdjustableBulb>::new();
     contents
         .lines()
         .map(|line| LightInstruction::from_str(line).unwrap())
         .for_each(|instruction| grid.apply_operation(instruction));
-    let total_brightness = grid.total_brightness();
-    println!("The total brightness is {}.", total_brightness);
+    let brightness = grid.total_brightness();
+    println!("The total brightness is {}.", brightness);
 }
 
 fn run_2015_07() {

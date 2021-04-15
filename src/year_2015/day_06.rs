@@ -1,3 +1,11 @@
+/*!
+--- Day 6: Probably a Fire Hazard ---
+
+Because your neighbors keep defeating you in the holiday house decorating contest year after year, you've decided to deploy one million lights in a 1000x1000 grid.
+
+Furthermore, because you've been especially nice this year, Santa has mailed you instructions on how to display the ideal lighting configuration.
+*/
+
 use std::error::Error;
 use std::fmt;
 use std::fmt::{Display, Formatter};
@@ -5,18 +13,23 @@ use std::fmt::{Display, Formatter};
 use regex::Regex;
 use std::str::FromStr;
 
-struct Point {
-    x: usize,
-    y: usize,
+/// Represents a point or bulb in the grid.
+#[derive(Debug)]
+pub struct Point {
+    pub x: usize,
+    pub y: usize,
 }
 
-enum Operation {
+/// Represents the operations of a light bulb.
+#[derive(Debug)]
+pub enum Operation {
     Toggle,
     TurnOn,
     TurnOff,
 }
 
-pub trait State: Clone + Default {
+/// Bulb describes types that can be used as a light bulb.
+pub trait Bulb: Clone + Default {
     fn toggle(&mut self);
 
     fn turn_on(&mut self);
@@ -26,24 +39,29 @@ pub trait State: Clone + Default {
     fn brightness(&self) -> i32;
 }
 
-#[derive(Clone, Default)]
+/// Represents a bulb that is either on or off.
+#[derive(Clone, Debug, Default)]
 pub struct SimpleBulb {
     state: bool,
 }
 
-impl State for SimpleBulb {
+impl Bulb for SimpleBulb {
+    /// Change the light to the opposite state.
     fn toggle(&mut self) {
         self.state = !self.state;
     }
 
+    /// Set the light as off.
     fn turn_on(&mut self) {
         self.state = true;
     }
 
+    /// Set the light as on.
     fn turn_off(&mut self) {
         self.state = false;
     }
 
+    /// Returns `1` if on and `0` if off.
     fn brightness(&self) -> i32 {
         if self.state {
             1
@@ -53,44 +71,78 @@ impl State for SimpleBulb {
     }
 }
 
-#[derive(Clone, Default)]
-pub struct DimmableBulb {
+/// Represents a bulb with brightness of zero or more.
+#[derive(Clone, Debug, Default)]
+pub struct AdjustableBulb {
     state: i32,
 }
 
-impl State for DimmableBulb {
+impl Bulb for AdjustableBulb {
+    /// Turns up the brightness by two.
     fn toggle(&mut self) {
         self.state += 2;
     }
 
+    /// turns up brightness by one.
     fn turn_on(&mut self) {
         self.state += 1;
     }
 
+    /// Turns brightness down by one to a minimum of zero.
     fn turn_off(&mut self) {
         if self.state != 0 {
             self.state -= 1;
         }
     }
 
+    /// Returns the light's brightness.
     fn brightness(&self) -> i32 {
         self.state
     }
 }
 
-pub struct LightGrid<T: State> {
+/// Represents a finite grid of lights.
+pub struct LightGrid<T: Bulb> {
     lights: Vec<Vec<T>>,
 }
 
 const GRID_CAPACITY: usize = 1000;
 
-impl<T: State> LightGrid<T> {
+impl<T: Bulb> LightGrid<T> {
+    /// Constructs a new full `LightGrid<T>`.
+    ///
+    /// The grid allocates elements right away.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use advent_of_code::year_2015::day_06::{LightGrid, SimpleBulb};
+    ///
+    /// let mut grid: LightGrid<SimpleBulb> = LightGrid::new();
+    /// ```
     pub fn new() -> LightGrid<T> {
         LightGrid {
             lights: vec![vec![T::default(); GRID_CAPACITY]; GRID_CAPACITY],
         }
     }
 
+    /// Returns the total brightness from all lights in the grid.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use advent_of_code::year_2015::day_06::{LightGrid, SimpleBulb, LightInstruction, Operation, Point};
+    ///
+    /// let mut grid: LightGrid<SimpleBulb> = LightGrid::new();
+    /// let instruction = LightInstruction {
+    ///     operation: Operation::Toggle,
+    ///     start_point: Point { x: 0, y: 0 },
+    ///     end_point: Point { x: 0, y: 999 }
+    /// };
+    /// grid.apply_operation(instruction);
+    /// let count = grid.total_brightness();
+    /// assert_eq!(count, 1000);
+    /// ```
     pub fn total_brightness(&self) -> i32 {
         let mut count = 0;
         for x in 0..GRID_CAPACITY {
@@ -101,6 +153,7 @@ impl<T: State> LightGrid<T> {
         count
     }
 
+    /// Applies the provided instruction to the lights in the grid.
     pub fn apply_operation(&mut self, instruction: LightInstruction) {
         for x in instruction.start_point.x..=instruction.end_point.x {
             for y in instruction.start_point.y..=instruction.end_point.y {
@@ -114,16 +167,18 @@ impl<T: State> LightGrid<T> {
     }
 }
 
-impl<T: State> Default for LightGrid<T> {
+impl<T: Bulb> Default for LightGrid<T> {
     fn default() -> Self {
         LightGrid::new()
     }
 }
 
+/// Represents an instruction for all lights between the provided start and end points.
+#[derive(Debug)]
 pub struct LightInstruction {
-    operation: Operation,
-    start_point: Point,
-    end_point: Point,
+    pub operation: Operation,
+    pub start_point: Point,
+    pub end_point: Point,
 }
 
 impl FromStr for LightInstruction {
@@ -163,6 +218,7 @@ impl FromStr for LightInstruction {
     }
 }
 
+/// Error type used when parsing a light instruction from a `str`.
 #[derive(Debug)]
 pub struct ParseInstructionError {
     pub(super) _priv: (),
@@ -200,7 +256,7 @@ fn test_light_grid_follow_instruction_bad_input() {
 }
 
 #[test]
-fn test_light_grid_follow_instruction() {
+fn test_light_grid_apply_operation() {
     let mut grid = LightGrid::<SimpleBulb>::new();
     let instruction = LightInstruction::from_str("turn on 0,0 through 999,999").unwrap();
     grid.apply_operation(instruction);
@@ -218,12 +274,12 @@ fn test_light_grid_follow_instruction() {
 
 #[test]
 fn test_light_grid_increase_brightness() {
-    let mut grid = LightGrid::<DimmableBulb>::new();
+    let mut grid = LightGrid::<AdjustableBulb>::new();
     let instruction = LightInstruction::from_str("turn on 0,0 through 0,0").unwrap();
     grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 1);
 
-    let mut grid = LightGrid::<DimmableBulb>::new();
+    let mut grid = LightGrid::<AdjustableBulb>::new();
     let instruction = LightInstruction::from_str("toggle 0,0 through 999,999").unwrap();
     grid.apply_operation(instruction);
     assert_eq!(grid.total_brightness(), 2000000);
@@ -239,20 +295,20 @@ fn test_simple_bulbs_input_file() {
         .lines()
         .map(|line| LightInstruction::from_str(line).unwrap())
         .for_each(|instruction| grid.apply_operation(instruction));
-    let lit_lights_count = grid.total_brightness();
-    assert_eq!(lit_lights_count, 543903);
+    let count = grid.total_brightness();
+    assert_eq!(count, 543903);
 }
 
 #[test]
-fn test_dimmable_bulbs_input_file() {
+fn test_adjustable_bulbs_input_file() {
     let contents =
         std::fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
 
-    let mut grid = LightGrid::<DimmableBulb>::new();
+    let mut grid = LightGrid::<AdjustableBulb>::new();
     contents
         .lines()
         .map(|line| LightInstruction::from_str(line).unwrap())
         .for_each(|instruction| grid.apply_operation(instruction));
-    let total_brightness = grid.total_brightness();
-    assert_eq!(total_brightness, 14687245);
+    let brightness = grid.total_brightness();
+    assert_eq!(brightness, 14687245);
 }
