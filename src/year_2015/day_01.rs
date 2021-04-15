@@ -49,6 +49,30 @@ impl InfiniteBuilding {
 ///
 /// let f = floor(b"(())");
 /// assert_eq!(f, 0);
+///
+/// let f = floor(b"()()");
+/// assert_eq!(f, 0);
+///
+/// let f = floor(b"(((");
+/// assert_eq!(f, 3);
+///
+/// let f = floor(b"(()(()(");
+/// assert_eq!(f, 3);
+///
+/// let f = floor(b"))(((((");
+/// assert_eq!(f, 3);
+///
+/// let f = floor(b"())");
+/// assert_eq!(f, -1);
+///
+/// let f = floor(b"))(");
+/// assert_eq!(f, -1);
+///
+/// let f = floor(b")))");
+/// assert_eq!(f, -3);
+///
+/// let f = floor(b")())())");
+/// assert_eq!(f, -3);
 /// ```
 pub fn floor(instructions: &[u8]) -> i32 {
     let mut building = InfiniteBuilding::new();
@@ -68,9 +92,17 @@ pub fn floor(instructions: &[u8]) -> i32 {
 ///
 /// let p = position(b")", -1);
 /// assert_eq!(p, Some(1));
+///
+/// let p = position(b"()())", -1);
+/// assert_eq!(p, Some(5));
 /// ```
 pub fn position(parentheses: &[u8], floor: i32) -> Option<i32> {
     let mut building = InfiniteBuilding::new();
+
+    if floor == 0 {
+        return Some(0);
+    }
+
     for c in parentheses.iter() {
         building.apply(c);
         if building.floor == floor {
@@ -80,65 +112,55 @@ pub fn position(parentheses: &[u8], floor: i32) -> Option<i32> {
     None
 }
 
+
 #[test]
-fn test_floor() {
-    let value = floor(b"(())");
-    assert_eq!(value, 0);
-
-    let value = floor(b"()()");
-    assert_eq!(value, 0);
-
-    let value = floor(b"(((");
-    assert_eq!(value, 3);
-
-    let value = floor(b"(()(()(");
-    assert_eq!(value, 3);
-
-    let value = floor(b"))(((((");
-    assert_eq!(value, 3);
-
-    let value = floor(b"())");
-    assert_eq!(value, -1);
-
-    let value = floor(b"))(");
-    assert_eq!(value, -1);
-
-    let value = floor(b")))");
-    assert_eq!(value, -3);
-
-    let value = floor(b")())())");
-    assert_eq!(value, -3);
+fn test_floor_bad_input() {
+    let floor = floor(b"pancakes");
+    assert_eq!(floor, 0);
 }
 
 #[test]
-fn test_position() {
-    let moves = position(b")", -1);
-    assert_eq!(moves, Some(1));
-
-    let moves = position(b"()())", -1);
-    assert_eq!(moves, Some(5));
+fn test_floor_empty() {
+    let floor = floor(b"");
+    assert_eq!(floor, 0);
 }
 
 #[test]
-fn test_apply_bad_input() {
-    let mut building = InfiniteBuilding::new();
-    building.apply(&b'f');
-    assert_eq!(building.floor, 0);
-    assert_eq!(building.position, 0);
+fn test_position_bad_input_and_basement_floor() {
+    let position = position(b"pancakes", -1);
+    assert_eq!(position, None);
+}
+
+#[test]
+fn test_position_empty_and_basement_floor() {
+    let position = position(b"", -1);
+    assert_eq!(position, None);
+}
+
+#[test]
+fn test_position_bad_input_and_ground_floor() {
+    let position = position(b"pancakes", 0);
+    assert_eq!(position, Some(0));
+}
+
+#[test]
+fn test_position_empty_and_ground_floor() {
+    let position = position(b"", 0);
+    assert_eq!(position, Some(0));
 }
 
 #[test]
 fn test_floor_input_file() {
     let contents = std::fs::read("input/2015/day-1.txt").expect("Failed to read file.");
 
-    let destination_floor = floor(&contents);
-    assert_eq!(destination_floor, 280);
+    let floor = floor(&contents);
+    assert_eq!(floor, 280);
 }
 
 #[test]
 fn test_position_input_file() {
     let contents = std::fs::read("input/2015/day-1.txt").expect("Failed to read file.");
 
-    let first_basement_position = position(&contents, -1);
-    assert_eq!(first_basement_position, Some(1797));
+    let position = position(&contents, -1);
+    assert_eq!(position, Some(1797));
 }
