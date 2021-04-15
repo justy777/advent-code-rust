@@ -168,8 +168,8 @@ fn test_grid_single_position_input_file() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.visited();
-    assert_eq!(houses_visited, 2081);
+    let visited = grid.visited();
+    assert_eq!(visited, 2081);
 }
 
 #[test]
@@ -181,6 +181,6 @@ fn test_grid_two_positions_input_file() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.visited();
-    assert_eq!(houses_visited, 2341);
+    let visited = grid.visited();
+    assert_eq!(visited, 2341);
 }

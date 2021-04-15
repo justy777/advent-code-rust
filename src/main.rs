@@ -83,17 +83,17 @@ fn run_2015_03() {
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.visited();
-    println!("Santa visited {} houses at least once.", houses_visited);
+    let visited = grid.visited();
+    println!("Santa visited {} houses at least once.", visited);
 
     let mut grid = InfiniteGrid::new(2);
 
     contents.chars().for_each(|c| grid.move_position(c));
 
-    let houses_visited = grid.visited();
+    let visited = grid.visited();
     println!(
         "Santa and Robo-Santa visited {} houses at least once.",
-        houses_visited
+        visited
     );
 }
 
@@ -115,21 +115,22 @@ fn run_2015_04() {
     );
 }
 
+/// Displays the solutions to Year 2015 Day 5: Doesn't He Have Intern-Elves For This?
 fn run_2015_05() {
-    println!("Advent of Code 2015 - Day 5");
+    println!("Advent of Code - Year 2015 Day 5: Doesn't He Have Intern-Elves For This?");
     let contents =
         fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
 
-    let nice_word_count = contents.lines().filter(|word| is_nice_word(word)).count();
+    let count = contents.lines().filter(|word| is_nice_word(word)).count();
     println!(
         "There are {} nice words with the first set of rules.",
-        nice_word_count
+        count
     );
 
-    let nice_word_count = contents.lines().filter(|word| is_nice_word2(word)).count();
+    let count = contents.lines().filter(|word| is_nice_word2(word)).count();
     println!(
         "There are {} nice words with the second set of rules.",
-        nice_word_count
+        count
     );
 }
 

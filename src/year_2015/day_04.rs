@@ -18,7 +18,7 @@ use crypto::md5::Md5;
 /// use advent_of_code::year_2015::day_04::find_number;
 ///
 /// let number = find_number(b"abcdef", 5);
-/// assert_eq!(number, 609043);
+/// assert_eq!(number, Some(609043));
 /// ```
 pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
     if leading_zeroes > 128 {
@@ -64,24 +64,24 @@ pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
 
 #[test]
 fn test_find_number_with_five_leading_zeroes() {
-    let value = find_number("abcdef".as_bytes(), 5).unwrap();
-    assert_eq!(value, 609043);
+    let number = find_number(b"abcdef", 5).unwrap();
+    assert_eq!(number, 609043);
 
-    let value = find_number("pqrstuv".as_bytes(), 5).unwrap();
-    assert_eq!(value, 1048970);
+    let number = find_number(b"pqrstuv", 5).unwrap();
+    assert_eq!(number, 1048970);
 }
 
 #[test]
 fn test_find_number_with_five_leading_zeroes_input() {
-    let key = "iwrupvqb";
+    let key = b"iwrupvqb";
 
-    let second_half_of_key = find_number(key.as_bytes(), 5).unwrap();
-    assert_eq!(second_half_of_key, 346386);
+    let number = find_number(key, 5).unwrap();
+    assert_eq!(number, 346386);
 }
 #[test]
 fn test_find_number_with_six_leading_zeroes_input() {
-    let key = "iwrupvqb";
+    let key = b"iwrupvqb";
 
-    let second_half_of_key = find_number(key.as_bytes(), 6).unwrap();
-    assert_eq!(second_half_of_key, 9958218);
+    let number = find_number(key, 6).unwrap();
+    assert_eq!(number, 9958218);
 }
