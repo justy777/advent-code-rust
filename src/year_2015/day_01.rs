@@ -97,12 +97,11 @@ pub fn floor(instructions: &[u8]) -> i32 {
 /// assert_eq!(p, Some(5));
 /// ```
 pub fn position(parentheses: &[u8], floor: i32) -> Option<i32> {
-    let mut building = InfiniteBuilding::new();
-
     if floor == 0 {
         return Some(0);
     }
 
+    let mut building = InfiniteBuilding::new();
     for c in parentheses.iter() {
         building.apply(c);
         if building.floor == floor {
@@ -111,7 +110,6 @@ pub fn position(parentheses: &[u8], floor: i32) -> Option<i32> {
     }
     None
 }
-
 
 #[test]
 fn test_floor_bad_input() {
