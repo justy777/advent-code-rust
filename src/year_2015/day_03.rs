@@ -80,6 +80,43 @@ impl InfiniteGrid {
     /// If parallel is more than one, positions will take turns moving.
     ///
     /// Moves are always exactly one house to the north `^`, south `v`, east `>`, or west `<`.
+    ///
+    /// # Examples
+    ///
+    /// Single position
+    /// ```
+    /// use advent_of_code::year_2015::day_03::InfiniteGrid;
+    ///
+    /// let mut grid = InfiniteGrid::new(1);
+    /// grid.move_position('>');
+    /// assert_eq!(grid.visited(), 2);
+    ///
+    ///
+    /// let mut grid = InfiniteGrid::new(1);
+    /// "^>v<".chars().for_each(|c| grid.move_position(c));
+    /// assert_eq!(grid.visited(), 4);
+    ///
+    /// let mut grid = InfiniteGrid::new(1);
+    /// "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
+    /// assert_eq!(grid.visited(), 2);
+    /// ```
+    ///
+    /// Two positions
+    /// ```
+    /// use advent_of_code::year_2015::day_03::InfiniteGrid;
+    ///
+    /// let mut grid = InfiniteGrid::new(2);
+    /// "^v".chars().for_each(|c| grid.move_position(c));
+    /// assert_eq!(grid.visited(), 3);
+    ///
+    /// let mut grid = InfiniteGrid::new(2);
+    /// "^>v<".chars().for_each(|c| grid.move_position(c));
+    /// assert_eq!(grid.visited(), 3);
+    ///
+    /// let mut grid = InfiniteGrid::new(2);
+    /// "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
+    /// assert_eq!(grid.visited(), 11);
+    /// ```
     pub fn move_position(&mut self, direction: char) {
         if self.current_positions.is_empty() {
             return;
@@ -97,90 +134,29 @@ impl InfiniteGrid {
     /// Returns the number of unique positions visited.
     ///
     /// The starting location counts as one visited position.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use advent_of_code::year_2015::day_03::InfiniteGrid;
-    ///
-    /// let mut grid = InfiniteGrid::new(1);
-    /// grid.move_position('>');
-    /// assert_eq!(grid.visited(), 2);
-    /// ```
     pub fn visited(&self) -> usize {
         self.past_positions.len()
     }
 }
 
-#[test]
-fn test_grid_move_position_bad_input() {
-    let mut grid = InfiniteGrid::new(1);
-    grid.move_position('f');
-    assert_eq!(grid.current_positions[0], Position::new());
-    assert_eq!(grid.turn, 0);
-}
+#[cfg(test)]
+mod tests {
+    use crate::year_2015::day_03::{InfiniteGrid, Position};
 
-#[test]
-fn test_grid_parallel_zero() {
-    let mut grid = InfiniteGrid::new(0);
-    grid.move_position('^');
-    assert!(grid.current_positions.is_empty());
-    assert_eq!(grid.current_positions.len(), 0);
-    assert_eq!(grid.past_positions.len(), 1);
-}
+    #[test]
+    fn test_grid_move_position_bad_input() {
+        let mut grid = InfiniteGrid::new(1);
+        grid.move_position('f');
+        assert_eq!(grid.current_positions[0], Position::new());
+        assert_eq!(grid.turn, 0);
+    }
 
-#[test]
-fn test_grid_single_position() {
-    let mut grid = InfiniteGrid::new(1);
-    grid.move_position('>');
-    assert_eq!(grid.visited(), 2);
-
-    let mut grid = InfiniteGrid::new(1);
-    "^>v<".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.visited(), 4);
-
-    let mut grid = InfiniteGrid::new(1);
-    "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.visited(), 2);
-}
-
-#[test]
-fn test_grid_two_positions() {
-    let mut grid = InfiniteGrid::new(2);
-    "^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.visited(), 3);
-
-    let mut grid = InfiniteGrid::new(2);
-    "^>v<".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.visited(), 3);
-
-    let mut grid = InfiniteGrid::new(2);
-    "^v^v^v^v^v".chars().for_each(|c| grid.move_position(c));
-    assert_eq!(grid.visited(), 11);
-}
-
-#[test]
-fn test_grid_single_position_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
-
-    let mut grid = InfiniteGrid::new(1);
-
-    contents.chars().for_each(|c| grid.move_position(c));
-
-    let visited = grid.visited();
-    assert_eq!(visited, 2081);
-}
-
-#[test]
-fn test_grid_two_positions_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
-
-    let mut grid = InfiniteGrid::new(2);
-
-    contents.chars().for_each(|c| grid.move_position(c));
-
-    let visited = grid.visited();
-    assert_eq!(visited, 2341);
+    #[test]
+    fn test_grid_parallel_zero() {
+        let mut grid = InfiniteGrid::new(0);
+        grid.move_position('^');
+        assert!(grid.current_positions.is_empty());
+        assert_eq!(grid.current_positions.len(), 0);
+        assert_eq!(grid.past_positions.len(), 1);
+    }
 }

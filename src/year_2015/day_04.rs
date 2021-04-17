@@ -19,6 +19,9 @@ use crypto::md5::Md5;
 ///
 /// let number = find_number(b"abcdef", 5);
 /// assert_eq!(number, Some(609043));
+///
+/// let number = find_number(b"pqrstuv", 5);
+/// assert_eq!(number, Some(1048970));
 /// ```
 pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
     if leading_zeroes > 128 {
@@ -60,28 +63,4 @@ pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
         hasher.reset();
     }
     result
-}
-
-#[test]
-fn test_find_number_with_five_leading_zeroes() {
-    let number = find_number(b"abcdef", 5).unwrap();
-    assert_eq!(number, 609043);
-
-    let number = find_number(b"pqrstuv", 5).unwrap();
-    assert_eq!(number, 1048970);
-}
-
-#[test]
-fn test_find_number_with_five_leading_zeroes_input() {
-    let key = b"iwrupvqb";
-
-    let number = find_number(key, 5).unwrap();
-    assert_eq!(number, 346386);
-}
-#[test]
-fn test_find_number_with_six_leading_zeroes_input() {
-    let key = b"iwrupvqb";
-
-    let number = find_number(key, 6).unwrap();
-    assert_eq!(number, 9958218);
 }

@@ -9,9 +9,9 @@ Furthermore, because you've been especially nice this year, Santa has mailed you
 use std::error::Error;
 use std::fmt;
 use std::fmt::{Display, Formatter};
+use std::str::FromStr;
 
 use regex::Regex;
-use std::str::FromStr;
 
 /// Represents a point or bulb in the grid.
 #[derive(Debug)]
@@ -153,6 +153,7 @@ impl<T: Bulb> LightGrid<T> {
         count
     }
 
+    // TODO: Update with happy path doc tests
     /// Applies the provided instruction to the lights in the grid.
     pub fn apply_operation(&mut self, instruction: LightInstruction) {
         for x in instruction.start_point.x..=instruction.end_point.x {
@@ -181,6 +182,7 @@ pub struct LightInstruction {
     pub end_point: Point,
 }
 
+// TODO: Add comments on proper string format
 impl FromStr for LightInstruction {
     type Err = ParseInstructionError;
 
@@ -230,85 +232,4 @@ impl Display for ParseInstructionError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         "provided string was not in format '(toggle|turn on|turn off) (0-999),(0-999) through (0-999),(0-999)'".fmt(f)
     }
-}
-
-#[test]
-fn test_light_grid_follow_instruction_bad_input() {
-    match LightInstruction::from_str("pancakes") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-
-    match LightInstruction::from_str("switch 0,0 through 999,0") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-
-    match LightInstruction::from_str("switch -1,0 through 999,0") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-
-    match LightInstruction::from_str("turn on 1000,1001 through 1000,1002") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    };
-}
-
-#[test]
-fn test_light_grid_apply_operation() {
-    let mut grid = LightGrid::<SimpleBulb>::new();
-    let instruction = LightInstruction::from_str("turn on 0,0 through 999,999").unwrap();
-    grid.apply_operation(instruction);
-    assert_eq!(grid.total_brightness(), 1000000);
-
-    let instruction = LightInstruction::from_str("turn off 499,499 through 500,500").unwrap();
-    grid.apply_operation(instruction);
-    assert_eq!(grid.total_brightness(), 999996);
-
-    let mut grid = LightGrid::<SimpleBulb>::new();
-    let instruction = LightInstruction::from_str("toggle 0,0 through 999,0").unwrap();
-    grid.apply_operation(instruction);
-    assert_eq!(grid.total_brightness(), 1000);
-}
-
-#[test]
-fn test_light_grid_increase_brightness() {
-    let mut grid = LightGrid::<AdjustableBulb>::new();
-    let instruction = LightInstruction::from_str("turn on 0,0 through 0,0").unwrap();
-    grid.apply_operation(instruction);
-    assert_eq!(grid.total_brightness(), 1);
-
-    let mut grid = LightGrid::<AdjustableBulb>::new();
-    let instruction = LightInstruction::from_str("toggle 0,0 through 999,999").unwrap();
-    grid.apply_operation(instruction);
-    assert_eq!(grid.total_brightness(), 2000000);
-}
-
-#[test]
-fn test_simple_bulbs_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
-
-    let mut grid = LightGrid::<SimpleBulb>::new();
-    contents
-        .lines()
-        .map(|line| LightInstruction::from_str(line).unwrap())
-        .for_each(|instruction| grid.apply_operation(instruction));
-    let count = grid.total_brightness();
-    assert_eq!(count, 543903);
-}
-
-#[test]
-fn test_adjustable_bulbs_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
-
-    let mut grid = LightGrid::<AdjustableBulb>::new();
-    contents
-        .lines()
-        .map(|line| LightInstruction::from_str(line).unwrap())
-        .for_each(|instruction| grid.apply_operation(instruction));
-    let brightness = grid.total_brightness();
-    assert_eq!(brightness, 14687245);
 }

@@ -6,6 +6,3 @@ extern crate lazy_static;
 
 /// This module provides the solutions to puzzles for 2015.
 pub mod year_2015;
-
-#[cfg(test)]
-mod tests {}

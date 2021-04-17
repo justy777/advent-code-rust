@@ -27,11 +27,17 @@ impl Present {
     /// # Examples
     ///
     /// ```
+    /// use std::str::FromStr;
+    ///
     /// use advent_of_code::year_2015::day_02::Present;
     ///
-    /// let present = Present { length: 2, width: 3, height: 4 };
+    /// let present = Present::from_str("2x3x4").unwrap();
     /// let paper = present.wrapping_paper_needed();
     /// assert_eq!(paper, 58);
+    ///
+    /// let present = Present::from_str("1x1x10").unwrap();
+    /// let ribbon = present.wrapping_paper_needed();
+    /// assert_eq!(ribbon, 43);
     /// ```
     pub fn wrapping_paper_needed(&self) -> u32 {
         let area_1 = self.length * self.width;
@@ -52,11 +58,17 @@ impl Present {
     /// # Examples
     ///
     /// ```
+    /// use std::str::FromStr;
+    ///
     /// use advent_of_code::year_2015::day_02::Present;
     ///
-    /// let present = Present { length: 2, width: 3, height: 4 };
+    /// let present = Present::from_str("2x3x4").unwrap();
     /// let ribbon = present.ribbon_needed();
     /// assert_eq!(ribbon, 34);
+    ///
+    /// let present = Present::from_str("1x1x10").unwrap();
+    /// let ribbon = present.ribbon_needed();
+    /// assert_eq!(ribbon, 14);
     /// ```
     pub fn ribbon_needed(&self) -> u32 {
         let needed_for_bow = self.length * self.width * self.height;
@@ -105,85 +117,4 @@ impl Display for ParsePresentError {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         "provided string was not in format '{length}x{width}x{height}'".fmt(f)
     }
-}
-
-#[test]
-fn test_wrapping_paper_needed() {
-    let present = Present::from_str("2x3x4").unwrap();
-    assert_eq!(present.wrapping_paper_needed(), 58);
-
-    let present = Present::from_str("1x1x10").unwrap();
-    assert_eq!(present.wrapping_paper_needed(), 43);
-}
-
-#[test]
-fn test_ribbon_needed() {
-    let present = Present::from_str("2x3x4").unwrap();
-    assert_eq!(present.ribbon_needed(), 34);
-
-    let present = Present::from_str("1x1x10").unwrap();
-    assert_eq!(present.ribbon_needed(), 14);
-}
-
-#[test]
-fn test_present_from_str_bad_input() {
-    match Present::from_str("hjhjxjhjhxikjk") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    }
-
-    match Present::from_str("1x1") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    }
-
-    match Present::from_str("1x1x1x1") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    }
-
-    match Present::from_str("-1x-1x-1") {
-        Ok(_) => panic!(),
-        Err(_) => (),
-    }
-}
-
-#[test]
-fn test_present_from_str_zero() {
-    let present = Present::from_str("0x0x0").unwrap();
-    assert_eq!(present.wrapping_paper_needed(), 0);
-    assert_eq!(present.ribbon_needed(), 0);
-}
-
-#[test]
-fn test_wrapping_paper_needed_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
-
-    let presents: Vec<Present> = contents
-        .lines()
-        .map(|line| Present::from_str(line).unwrap())
-        .collect();
-
-    let wrapping_paper_needed: u32 = presents
-        .iter()
-        .map(|present| present.wrapping_paper_needed())
-        .sum();
-
-    assert_eq!(wrapping_paper_needed, 1586300);
-}
-
-#[test]
-fn test_ribbon_needed_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
-
-    let presents: Vec<Present> = contents
-        .lines()
-        .map(|line| Present::from_str(line).unwrap())
-        .collect();
-
-    let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
-
-    assert_eq!(ribbon_needed, 3737498);
 }

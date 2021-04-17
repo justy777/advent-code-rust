@@ -56,8 +56,25 @@ fn contains_forbidden_str(s: &str) -> bool {
 /// ```
 /// use advent_of_code::year_2015::day_05::is_nice_word;
 ///
+/// // It has 3 vowels (`u,i,o`), a double letter `dd`, and none of the disallowed strings.
 /// let is_nice = is_nice_word("ugknbfddgicrmopn");
 /// assert!(is_nice);
+///
+/// // Fills all the requirements even though the letters used by different rules overlap
+/// let is_nice = is_nice_word("aaa");
+/// assert!(is_nice);
+///
+/// // It has no double letter
+/// let is_nice = is_nice_word("jchzalrnumimnmhp");
+/// assert!(!is_nice);
+///
+/// // It contains the string `xy`
+/// let is_nice = is_nice_word("haegwjzuvuyypxyu");
+/// assert!(!is_nice);
+///
+/// // It contains only one vowel
+/// let is_nice = is_nice_word("dvszwmarrgswjxmb");
+/// assert!(!is_nice);
 /// ```
 pub fn is_nice_word(s: &str) -> bool {
     count_vowels(s) >= 3 && contains_double_letter(s) && !contains_forbidden_str(s)
@@ -106,44 +123,22 @@ fn contains_letter_that_repeats_with_letter_between(s: &str) -> bool {
 /// ```
 /// use advent_of_code::year_2015::day_05::is_nice_word2;
 ///
+/// // It has a pair that appears twice `qj` and a letter that repeats with exactly one letter between them `zxz`
 /// let is_nice = is_nice_word2("qjhvhtzxzqqjkmpb");
 /// assert!(is_nice);
+///
+/// // Fills all requirements even though the letter used by different rules overlap
+/// let is_nice = is_nice_word2("xxyxx");
+/// assert!(is_nice);
+///
+/// // It has pair `tg`, but no repeat with a single letter between them.
+/// let is_nice = is_nice_word2("uurcxstgmygtbstg");
+/// assert!(!is_nice);
+///
+/// // It has a repeating letter with one between them `odo`, but no pair that appears twice.
+/// let is_nice = is_nice_word2("ieodomkazucvgmuy");
+/// assert!(!is_nice);
 /// ```
 pub fn is_nice_word2(s: &str) -> bool {
     contains_pair_of_letters_twice(s) && contains_letter_that_repeats_with_letter_between(s)
-}
-
-#[test]
-fn test_is_nice_word() {
-    assert!(is_nice_word("ugknbfddgicrmopn"));
-    assert!(is_nice_word("aaa"));
-    assert!(!is_nice_word("jchzalrnumimnmhp"));
-    assert!(!is_nice_word("haegwjzuvuyypxyu"));
-    assert!(!is_nice_word("dvszwmarrgswjxmb"));
-}
-
-#[test]
-fn test_is_nice_word2() {
-    assert!(is_nice_word2("qjhvhtzxzqqjkmpb"));
-    assert!(is_nice_word2("xxyxx"));
-    assert!(!is_nice_word2("uurcxstgmygtbstg"));
-    assert!(!is_nice_word2("ieodomkazucvgmuy"));
-}
-
-#[test]
-fn test_is_nice_word_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
-
-    let count = contents.lines().filter(|word| is_nice_word(word)).count();
-    assert_eq!(count, 236);
-}
-
-#[test]
-fn test_is_nice_word2_input_file() {
-    let contents =
-        std::fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
-
-    let count = contents.lines().filter(|word| is_nice_word2(word)).count();
-    assert_eq!(count, 51);
 }

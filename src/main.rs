@@ -197,7 +197,7 @@ fn run_2015_08() {
 fn run_2015_09() {
     println!("Advent of Code 2015 - Day 9");
     let contents =
-        std::fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
     contents
@@ -257,7 +257,7 @@ fn run_2015_12() {
 fn run_2015_13() {
     println!("Advent of Code 2015 - Day 13");
     let contents =
-        std::fs::read_to_string("input/2015/day-13.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-13.txt").expect("Failed to read file to string.");
 
     let mut plan = SeatingPlan::new();
     contents
@@ -294,7 +294,7 @@ fn run_2015_13() {
 fn run_2015_14() {
     println!("Advent of Code 2015 - Day 14");
     let contents =
-        std::fs::read_to_string("input/2015/day-14.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-14.txt").expect("Failed to read file to string.");
 
     let reindeer: Vec<Reindeer> = contents
         .lines()

@@ -1,10 +1,13 @@
-use advent_of_code::year_2015::day_01::{floor, position};
-use advent_of_code::year_2015::day_02::Present;
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use std::fs;
 use std::str::FromStr;
 
+use criterion::{black_box, criterion_group, criterion_main, Criterion};
+
+use advent_of_code::year_2015::day_01::{floor, position};
+use advent_of_code::year_2015::day_02::Present;
+
 pub fn floor_benchmark(c: &mut Criterion) {
-    let contents = std::fs::read("input/2015/day-1.txt").expect("Failed to read file.");
+    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file.");
 
     c.bench_function("Year 2015 Day 1 - floor/empty", |b| {
         b.iter(|| floor(black_box(b"")))
@@ -15,7 +18,7 @@ pub fn floor_benchmark(c: &mut Criterion) {
 }
 
 pub fn position_benchmark(c: &mut Criterion) {
-    let contents = std::fs::read("input/2015/day-1.txt").expect("Failed to read file.");
+    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file.");
 
     c.bench_function("Year 2015 Day 1 - position/empty/-1", |b| {
         b.iter(|| position(black_box(b""), -1))
@@ -29,7 +32,7 @@ pub fn position_benchmark(c: &mut Criterion) {
 }
 
 pub fn wrapping_benchmark(c: &mut Criterion) {
-    let contents = std::fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file.");
+    let contents = fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file.");
 
     c.bench_function("Year 2015 Day 2 - wrapping paper/0x0x0", |b| {
         b.iter(|| {
@@ -53,7 +56,7 @@ pub fn wrapping_benchmark(c: &mut Criterion) {
 }
 
 pub fn ribbon_benchmark(c: &mut Criterion) {
-    let contents = std::fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file.");
+    let contents = fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file.");
 
     c.bench_function("Year 2015 Day 2 - ribbon/0x0x0", |b| {
         b.iter(|| {

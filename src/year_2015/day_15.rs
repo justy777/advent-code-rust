@@ -1,6 +1,5 @@
-use std::str::FromStr;
-
 use regex::Regex;
+use std::str::FromStr;
 
 struct Ingredient {
     name: String,
