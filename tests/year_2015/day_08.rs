@@ -23,7 +23,7 @@ fn test_escape_string() {
 #[test]
 fn test_reformat_string_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-8.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-08.txt").expect("Failed to read file to string.");
 
     let before: usize = contents.lines().map(|s| s.len()).sum();
     let after: usize = contents.lines().map(|s| reformat_string(s).len()).sum();
@@ -33,7 +33,7 @@ fn test_reformat_string_input_file() {
 #[test]
 fn test_escape_string_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-8.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-08.txt").expect("Failed to read file to string.");
 
     let before: usize = contents.lines().map(|s| s.len()).sum();
     let after: usize = contents.lines().map(|s| escape_string(s).len()).sum();

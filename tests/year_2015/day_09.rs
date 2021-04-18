@@ -42,7 +42,7 @@ fn test_longest_path() {
 #[test]
 fn test_shortest_path_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-09.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
     contents
@@ -58,7 +58,7 @@ fn test_shortest_path_input_file() {
 #[test]
 fn test_longest_path_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-09.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
     contents

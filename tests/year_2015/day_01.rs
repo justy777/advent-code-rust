@@ -40,7 +40,7 @@ fn test_position_empty_and_ground_floor() {
 
 #[test]
 fn test_floor_input_file() {
-    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file.");
+    let contents = fs::read("input/2015/day-01.txt").expect("Failed to read file.");
 
     let floor = floor(&contents);
     assert_eq!(floor, 280);
@@ -48,7 +48,7 @@ fn test_floor_input_file() {
 
 #[test]
 fn test_position_input_file() {
-    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file.");
+    let contents = fs::read("input/2015/day-01.txt").expect("Failed to read file.");
 
     let position = position(&contents, -1);
     assert_eq!(position, Some(1797));

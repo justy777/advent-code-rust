@@ -90,7 +90,6 @@ impl Default for Circuit {
     }
 }
 
-
 pub struct CircuitInstruction {
     wire: String,
     output: Gate,
@@ -107,7 +106,10 @@ impl FromStr for CircuitInstruction {
             let operand2 = Endpoint::from(iter.next().unwrap());
             iter.next();
             let wire = String::from(iter.next().unwrap());
-            Ok( CircuitInstruction {wire, output: Gate::And(operand1, operand2) })
+            Ok(CircuitInstruction {
+                wire,
+                output: Gate::And(operand1, operand2),
+            })
         } else if s.contains("OR") {
             let mut iter = s.split(' ');
             let operand1 = Endpoint::from(iter.next().unwrap());
@@ -115,7 +117,10 @@ impl FromStr for CircuitInstruction {
             let operand2 = Endpoint::from(iter.next().unwrap());
             iter.next();
             let wire = String::from(iter.next().unwrap());
-            Ok( CircuitInstruction { wire, output: Gate::Or(operand1, operand2) })
+            Ok(CircuitInstruction {
+                wire,
+                output: Gate::Or(operand1, operand2),
+            })
         } else if s.contains("LSHIFT") {
             let mut iter = s.split(' ');
             let operand = Endpoint::from(iter.next().unwrap());
@@ -123,7 +128,10 @@ impl FromStr for CircuitInstruction {
             let shift = iter.next().unwrap().parse::<u16>().unwrap();
             iter.next();
             let wire = String::from(iter.next().unwrap());
-            Ok( CircuitInstruction { wire, output: Gate::LeftShift(operand, shift) })
+            Ok(CircuitInstruction {
+                wire,
+                output: Gate::LeftShift(operand, shift),
+            })
         } else if s.contains("RSHIFT") {
             let mut iter = s.split(' ');
             let operand = Endpoint::from(iter.next().unwrap());
@@ -131,20 +139,29 @@ impl FromStr for CircuitInstruction {
             let shift = iter.next().unwrap().parse::<u16>().unwrap();
             iter.next();
             let wire = String::from(iter.next().unwrap());
-            Ok( CircuitInstruction { wire, output: Gate::RightShift(operand, shift) })
+            Ok(CircuitInstruction {
+                wire,
+                output: Gate::RightShift(operand, shift),
+            })
         } else if s.contains("NOT") {
             let mut iter = s.split(' ');
             iter.next();
             let operand = Endpoint::from(iter.next().unwrap());
             iter.next();
             let wire = String::from(iter.next().unwrap());
-            Ok( CircuitInstruction { wire, output: Gate::Not(operand) })
+            Ok(CircuitInstruction {
+                wire,
+                output: Gate::Not(operand),
+            })
         } else {
             let mut iter = s.split(' ');
             let operand = Endpoint::from(iter.next().unwrap());
             iter.next();
             let wire = String::from(iter.next().unwrap());
-            Ok( CircuitInstruction { wire, output: Gate::NoOp(operand) })
+            Ok(CircuitInstruction {
+                wire,
+                output: Gate::NoOp(operand),
+            })
         }
     }
 }

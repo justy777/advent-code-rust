@@ -5,7 +5,7 @@ use advent_of_code::year_2015::day_03::InfiniteGrid;
 #[test]
 fn test_grid_single_position_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-03.txt").expect("Failed to read file to string.");
 
     let mut grid = InfiniteGrid::new(1);
 
@@ -18,7 +18,7 @@ fn test_grid_single_position_input_file() {
 #[test]
 fn test_grid_two_positions_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-03.txt").expect("Failed to read file to string.");
 
     let mut grid = InfiniteGrid::new(2);
 

@@ -36,7 +36,7 @@ fn test_present_from_str_zero() {
 #[test]
 fn test_wrapping_paper_needed_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-02.txt").expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents
         .lines()
@@ -55,7 +55,7 @@ fn test_wrapping_paper_needed_input_file() {
 #[test]
 fn test_ribbon_needed_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-02.txt").expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents
         .lines()

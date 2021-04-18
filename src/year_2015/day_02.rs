@@ -4,10 +4,10 @@ The elves are running low on wrapping paper, and so they need to submit an order
 They have a list of the dimensions of each present, and only want to order exactly as much as they need.
 */
 
-use std::{cmp, fmt};
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
+use std::{cmp, fmt};
 
 use regex::Regex;
 

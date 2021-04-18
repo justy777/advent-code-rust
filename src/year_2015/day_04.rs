@@ -37,7 +37,6 @@ pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
         (false, leading_zeroes / 2 + 1)
     };
 
-    let mut result = None;
     for i in 0..u64::MAX {
         hasher.input(key);
         hasher.input(i.to_string().as_bytes());
@@ -56,11 +55,10 @@ pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
         }
 
         if first_bytes == 0 {
-            result = Some(i);
-            break;
+            return Some(i);
         }
 
         hasher.reset();
     }
-    result
+    None
 }

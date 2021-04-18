@@ -6,10 +6,11 @@ use advent_of_code::year_2015::day_07::{Circuit, CircuitInstruction};
 #[test]
 fn test_small_circuit() {
     let contents =
-        fs::read_to_string("input/2015/day-7-sample.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-07-sample.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents.lines()
+    contents
+        .lines()
         .map(|s| CircuitInstruction::from_str(s))
         .filter_map(|result| result.ok())
         .for_each(|instruction| circuit.add_instruction(instruction));
@@ -28,10 +29,11 @@ fn test_small_circuit() {
 #[test]
 fn test_circuit_resolve_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-07.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents.lines()
+    contents
+        .lines()
         .map(|s| CircuitInstruction::from_str(s))
         .filter_map(|result| result.ok())
         .for_each(|instruction| circuit.add_instruction(instruction));
@@ -44,10 +46,11 @@ fn test_circuit_resolve_input_file() {
 #[test]
 fn test_circuit_resolve_input_file_and_extra_instruction() {
     let contents =
-        fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-07.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents.lines()
+    contents
+        .lines()
         .map(|s| CircuitInstruction::from_str(s))
         .filter_map(|result| result.ok())
         .for_each(|instruction| circuit.add_instruction(instruction));

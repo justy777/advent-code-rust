@@ -38,7 +38,7 @@ fn main() {
 /// Displays the solutions to Year 2015 Day 1: Not Quite Lisp.
 fn run_2015_01() {
     println!("Advent of Code - Year 2015 Day 1: Not Quite Lisp");
-    let contents = fs::read("input/2015/day-1.txt").expect("Failed to read file.");
+    let contents = fs::read("input/2015/day-01.txt").expect("Failed to read file.");
 
     let f = floor(&contents);
     println!("The instructions take Santa to floor {}.", f);
@@ -51,7 +51,7 @@ fn run_2015_01() {
 fn run_2015_02() {
     println!("Advent of Code - Year 2015 Day 2: I Was Told There Would Be No Math");
     let contents =
-        fs::read_to_string("input/2015/day-2.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-02.txt").expect("Failed to read file to string.");
 
     let presents: Vec<Present> = contents
         .lines()
@@ -78,7 +78,7 @@ fn run_2015_02() {
 fn run_2015_03() {
     println!("Advent of Code - Year 2015 Day 3: Perfectly Spherical Houses in a Vacuum");
     let contents =
-        fs::read_to_string("input/2015/day-3.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-03.txt").expect("Failed to read file to string.");
 
     let mut grid = InfiniteGrid::new(1);
 
@@ -120,7 +120,7 @@ fn run_2015_04() {
 fn run_2015_05() {
     println!("Advent of Code - Year 2015 Day 5: Doesn't He Have Intern-Elves For This?");
     let contents =
-        fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-05.txt").expect("Failed to read file to string.");
 
     let count = contents.lines().filter(|s| is_nice_word(s)).count();
     println!(
@@ -139,7 +139,7 @@ fn run_2015_05() {
 fn run_2015_06() {
     println!("Advent of Code - Year 2015 Day 6: Probably a Fire Hazard");
     let contents =
-        fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-06.txt").expect("Failed to read file to string.");
 
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
@@ -163,10 +163,11 @@ fn run_2015_06() {
 fn run_2015_07() {
     println!("Advent of Code 2015 - Day 7");
     let contents =
-        fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-07.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents.lines()
+    contents
+        .lines()
         .map(|s| CircuitInstruction::from_str(s))
         .filter_map(|result| result.ok())
         .for_each(|instruction| circuit.add_instruction(instruction));
@@ -188,7 +189,7 @@ fn run_2015_07() {
 fn run_2015_08() {
     println!("Advent of Code 2015 - Day 8");
     let contents =
-        fs::read_to_string("input/2015/day-8.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-08.txt").expect("Failed to read file to string.");
 
     let before: usize = contents.lines().map(|s| s.len()).sum();
     let after: usize = contents.lines().map(|s| reformat_string(s).len()).sum();
@@ -203,7 +204,7 @@ fn run_2015_08() {
 fn run_2015_09() {
     println!("Advent of Code 2015 - Day 9");
     let contents =
-        fs::read_to_string("input/2015/day-9.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-09.txt").expect("Failed to read file to string.");
 
     let mut graph = Graph::new();
     contents

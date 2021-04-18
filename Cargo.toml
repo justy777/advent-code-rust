@@ -21,3 +21,11 @@ criterion = "0.3.4"
 [[bench]]
 name = "benchmarks"
 harness = false
+
+[lib]
+bench = false
+
+[[bin]]
+name = "advent-of-code"
+path = "src/main.rs"
+bench = false

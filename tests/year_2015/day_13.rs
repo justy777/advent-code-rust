@@ -53,15 +53,17 @@ fn test_happiest_table_input_file_and_you() {
             "You would gain 0 happiness units by sitting next to {}.",
             guest
         );
-        let preference = SeatingPreference::from_str(&s).unwrap();
-        plan.add_preference(preference);
+        if let Ok(preference) = SeatingPreference::from_str(&s) {
+            plan.add_preference(preference);
+        }
 
         let s = format!(
             "{} would gain 0 happiness units by sitting next to You.",
             guest
         );
-        let preference = SeatingPreference::from_str(&s).unwrap();
-        plan.add_preference(preference);
+        if let Ok(preference) = SeatingPreference::from_str(&s) {
+            plan.add_preference(preference);
+        }
     }
 
     let max = plan.happiest_table();

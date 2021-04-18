@@ -64,7 +64,7 @@ fn test_light_grid_increase_brightness() {
 #[test]
 fn test_simple_bulbs_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-06.txt").expect("Failed to read file to string.");
 
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
@@ -79,7 +79,7 @@ fn test_simple_bulbs_input_file() {
 #[test]
 fn test_adjustable_bulbs_input_file() {
     let contents =
-        fs::read_to_string("input/2015/day-6.txt").expect("Failed to read file to string.");
+        fs::read_to_string("input/2015/day-06.txt").expect("Failed to read file to string.");
 
     let mut grid = LightGrid::<AdjustableBulb>::new();
     contents
