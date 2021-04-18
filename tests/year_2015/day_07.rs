@@ -1,19 +1,18 @@
 use std::fs;
+use std::str::FromStr;
 
-use advent_of_code::year_2015::day_07::Circuit;
+use advent_of_code::year_2015::day_07::{Circuit, CircuitInstruction};
 
 #[test]
 fn test_small_circuit() {
-    let mut circuit = Circuit::new();
-    circuit.follow_instruction("123 -> x");
-    circuit.follow_instruction("456 -> y");
-    circuit.follow_instruction("x AND y -> d");
-    circuit.follow_instruction("x OR y -> e");
-    circuit.follow_instruction("x LSHIFT 2 -> f");
-    circuit.follow_instruction("y RSHIFT 2 -> g");
-    circuit.follow_instruction("NOT x -> h");
-    circuit.follow_instruction("NOT y -> i");
+    let contents =
+        fs::read_to_string("input/2015/day-7-sample.txt").expect("Failed to read file to string.");
 
+    let mut circuit = Circuit::new();
+    contents.lines()
+        .map(|s| CircuitInstruction::from_str(s))
+        .filter_map(|result| result.ok())
+        .for_each(|instruction| circuit.add_instruction(instruction));
     circuit.resolve_circuit();
 
     assert_eq!(circuit.signal("d").unwrap(), &72);
@@ -32,9 +31,10 @@ fn test_circuit_resolve_input_file() {
         fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents
-        .lines()
-        .for_each(|line| circuit.follow_instruction(line));
+    contents.lines()
+        .map(|s| CircuitInstruction::from_str(s))
+        .filter_map(|result| result.ok())
+        .for_each(|instruction| circuit.add_instruction(instruction));
     circuit.resolve_circuit();
 
     let signal = circuit.signal("a").unwrap();
@@ -47,11 +47,14 @@ fn test_circuit_resolve_input_file_and_extra_instruction() {
         fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents
-        .lines()
-        .for_each(|line| circuit.follow_instruction(line));
+    contents.lines()
+        .map(|s| CircuitInstruction::from_str(s))
+        .filter_map(|result| result.ok())
+        .for_each(|instruction| circuit.add_instruction(instruction));
 
-    circuit.follow_instruction("16076 -> b");
+    if let Ok(instruction) = CircuitInstruction::from_str("16076 -> b") {
+        circuit.add_instruction(instruction);
+    };
     circuit.resolve_circuit();
 
     let signal = circuit.signal("a").unwrap();

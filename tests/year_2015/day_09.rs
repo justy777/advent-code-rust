@@ -7,12 +7,15 @@ use advent_of_code::year_2015::day_09::{Edge, Graph};
 fn test_shortest_path() {
     let mut graph = Graph::new();
 
-    let edge = Edge::from_str("London to Dublin = 464").unwrap();
-    graph.add_edge(edge);
-    let edge = Edge::from_str("London to Belfast = 518").unwrap();
-    graph.add_edge(edge);
-    let edge = Edge::from_str("Dublin to Belfast = 141").unwrap();
-    graph.add_edge(edge);
+    if let Ok(edge) = Edge::from_str("London to Dublin = 464") {
+        graph.add_edge(edge);
+    };
+    if let Ok(edge) = Edge::from_str("London to Belfast = 518") {
+        graph.add_edge(edge);
+    };
+    if let Ok(edge) = Edge::from_str("Dublin to Belfast = 141") {
+        graph.add_edge(edge);
+    }
 
     let min = graph.shortest_path();
     assert_eq!(min, 605);
@@ -22,12 +25,15 @@ fn test_shortest_path() {
 fn test_longest_path() {
     let mut graph = Graph::new();
 
-    let edge = Edge::from_str("London to Dublin = 464").unwrap();
-    graph.add_edge(edge);
-    let edge = Edge::from_str("London to Belfast = 518").unwrap();
-    graph.add_edge(edge);
-    let edge = Edge::from_str("Dublin to Belfast = 141").unwrap();
-    graph.add_edge(edge);
+    if let Ok(edge) = Edge::from_str("London to Dublin = 464") {
+        graph.add_edge(edge);
+    };
+    if let Ok(edge) = Edge::from_str("London to Belfast = 518") {
+        graph.add_edge(edge);
+    };
+    if let Ok(edge) = Edge::from_str("Dublin to Belfast = 141") {
+        graph.add_edge(edge);
+    }
 
     let min = graph.longest_path();
     assert_eq!(min, 982);
@@ -41,7 +47,8 @@ fn test_shortest_path_input_file() {
     let mut graph = Graph::new();
     contents
         .lines()
-        .map(|line| Edge::from_str(line).unwrap())
+        .map(|s| Edge::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|edge| graph.add_edge(edge));
 
     let min = graph.shortest_path();
@@ -56,7 +63,8 @@ fn test_longest_path_input_file() {
     let mut graph = Graph::new();
     contents
         .lines()
-        .map(|line| Edge::from_str(line).unwrap())
+        .map(|s| Edge::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|edge| graph.add_edge(edge));
 
     let max = graph.longest_path();

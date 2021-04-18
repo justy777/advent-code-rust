@@ -77,15 +77,11 @@ impl FromStr for SeatingPreference {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let guest = caps.name("guest").unwrap().as_str().to_string();
-                let neighbour = caps.name("neighbour").unwrap().as_str().to_string();
-                let operative_word = caps.name("operative").unwrap().as_str();
-                let mut happiness = caps
-                    .name("happiness")
-                    .unwrap()
-                    .as_str()
-                    .parse::<i32>()
-                    .unwrap();
+                let parse_str = |key| caps.name(key).unwrap().as_str();
+                let guest = parse_str("guest").to_string();
+                let neighbour = parse_str("neighbour").to_string();
+                let operative_word = parse_str("operative");
+                let mut happiness = parse_str("happiness").parse::<i32>().unwrap();
                 if operative_word == "lose" {
                     happiness = happiness.neg();
                 }

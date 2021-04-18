@@ -20,24 +20,12 @@ impl FromStr for Reindeer {
         match REGEX.captures(s) {
             Some(caps) => {
                 let name = caps.name("name").unwrap().as_str().to_string();
-                let flying_speed = caps
-                    .name("flying_speed")
-                    .unwrap()
-                    .as_str()
-                    .parse::<u32>()
-                    .unwrap();
-                let flying_time = caps
-                    .name("flying_time")
-                    .unwrap()
-                    .as_str()
-                    .parse::<u32>()
-                    .unwrap();
-                let rest_time = caps
-                    .name("rest_time")
-                    .unwrap()
-                    .as_str()
-                    .parse::<u32>()
-                    .unwrap();
+
+                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<u32>().unwrap();
+
+                let flying_speed = parse_int("flying_speed");
+                let flying_time = parse_int("flying_time");
+                let rest_time = parse_int("rest_time");
 
                 Ok(Reindeer {
                     name,

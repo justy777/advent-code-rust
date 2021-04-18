@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::str::FromStr;
 
 #[derive(Clone)]
 enum Endpoint {
@@ -27,14 +28,14 @@ enum Gate {
 }
 
 pub struct Circuit {
-    parts: HashMap<String, Gate>,
+    wires: HashMap<String, Gate>,
     signals: HashMap<String, u16>,
 }
 
 impl Circuit {
     pub fn new() -> Circuit {
         Circuit {
-            parts: HashMap::new(),
+            wires: HashMap::new(),
             signals: HashMap::new(),
         }
     }
@@ -43,13 +44,13 @@ impl Circuit {
         self.signals.get(wire)
     }
 
-    fn add_gate(&mut self, name: String, gate: Gate) {
-        self.parts.insert(name, gate);
+    pub fn add_instruction(&mut self, instruction: CircuitInstruction) {
+        self.wires.insert(instruction.wire, instruction.output);
     }
 
     pub fn resolve_circuit(&mut self) {
-        let parts = self.parts.clone();
-        parts.keys().for_each(|key| {
+        let wires = self.wires.clone();
+        wires.keys().for_each(|key| {
             self.resolve_signal(key);
         });
     }
@@ -62,8 +63,8 @@ impl Circuit {
         if self.signals.contains_key(name) {
             return *self.signals.get(name).unwrap();
         }
-        let parts = self.parts.clone();
-        let signal = match parts.get(name).unwrap() {
+        let wires = self.wires.clone();
+        let signal = match wires.get(name).unwrap() {
             Gate::And(v1, v2) => self.resolve_endpoint(v1) & self.resolve_endpoint(v2),
             Gate::Or(v1, v2) => self.resolve_endpoint(v1) | self.resolve_endpoint(v2),
             Gate::LeftShift(v1, v2) => self.resolve_endpoint(v1) << *v2,
@@ -81,59 +82,69 @@ impl Circuit {
             Endpoint::Wire(name) => self.resolve_signal(&name),
         }
     }
-
-    pub fn follow_instruction(&mut self, instruction: &str) {
-        if instruction.contains("AND") {
-            let mut iter = instruction.split(' ');
-            let operand1 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let operand2 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let output = String::from(iter.next().unwrap());
-            self.add_gate(output, Gate::And(operand1, operand2));
-        } else if instruction.contains("OR") {
-            let mut iter = instruction.split(' ');
-            let operand1 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let operand2 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let output = String::from(iter.next().unwrap());
-            self.add_gate(output, Gate::Or(operand1, operand2));
-        } else if instruction.contains("LSHIFT") {
-            let mut iter = instruction.split(' ');
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let shift = iter.next().unwrap().parse::<u16>().unwrap();
-            iter.next();
-            let output = String::from(iter.next().unwrap());
-            self.add_gate(output, Gate::LeftShift(operand, shift))
-        } else if instruction.contains("RSHIFT") {
-            let mut iter = instruction.split(' ');
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let shift = iter.next().unwrap().parse::<u16>().unwrap();
-            iter.next();
-            let output = String::from(iter.next().unwrap());
-            self.add_gate(output, Gate::RightShift(operand, shift))
-        } else if instruction.contains("NOT") {
-            let mut iter = instruction.split(' ');
-            iter.next();
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let output = String::from(iter.next().unwrap());
-            self.add_gate(output, Gate::Not(operand))
-        } else {
-            let mut iter = instruction.split(' ');
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let output = String::from(iter.next().unwrap());
-            self.add_gate(output, Gate::NoOp(operand))
-        }
-    }
 }
 
 impl Default for Circuit {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+
+pub struct CircuitInstruction {
+    wire: String,
+    output: Gate,
+}
+
+impl FromStr for CircuitInstruction {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        if s.contains("AND") {
+            let mut iter = s.split(' ');
+            let operand1 = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let operand2 = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let wire = String::from(iter.next().unwrap());
+            Ok( CircuitInstruction {wire, output: Gate::And(operand1, operand2) })
+        } else if s.contains("OR") {
+            let mut iter = s.split(' ');
+            let operand1 = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let operand2 = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let wire = String::from(iter.next().unwrap());
+            Ok( CircuitInstruction { wire, output: Gate::Or(operand1, operand2) })
+        } else if s.contains("LSHIFT") {
+            let mut iter = s.split(' ');
+            let operand = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let shift = iter.next().unwrap().parse::<u16>().unwrap();
+            iter.next();
+            let wire = String::from(iter.next().unwrap());
+            Ok( CircuitInstruction { wire, output: Gate::LeftShift(operand, shift) })
+        } else if s.contains("RSHIFT") {
+            let mut iter = s.split(' ');
+            let operand = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let shift = iter.next().unwrap().parse::<u16>().unwrap();
+            iter.next();
+            let wire = String::from(iter.next().unwrap());
+            Ok( CircuitInstruction { wire, output: Gate::RightShift(operand, shift) })
+        } else if s.contains("NOT") {
+            let mut iter = s.split(' ');
+            iter.next();
+            let operand = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let wire = String::from(iter.next().unwrap());
+            Ok( CircuitInstruction { wire, output: Gate::Not(operand) })
+        } else {
+            let mut iter = s.split(' ');
+            let operand = Endpoint::from(iter.next().unwrap());
+            iter.next();
+            let wire = String::from(iter.next().unwrap());
+            Ok( CircuitInstruction { wire, output: Gate::NoOp(operand) })
+        }
     }
 }

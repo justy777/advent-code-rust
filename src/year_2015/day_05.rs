@@ -41,7 +41,7 @@ fn contains_forbidden_str(s: &str) -> bool {
     lazy_static! {
         static ref FORBIDDEN_STRINGS: [&'static str; 4] = ["ab", "cd", "pq", "xy"];
     }
-    FORBIDDEN_STRINGS.iter().any(|x| s.contains(x))
+    FORBIDDEN_STRINGS.iter().any(|pat| s.contains(pat))
 }
 
 /// Returns `true` if str has all the properties of a nice word.

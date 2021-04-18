@@ -1,7 +1,7 @@
 use std::fs;
 use std::str::FromStr;
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{black_box, Criterion, criterion_group, criterion_main};
 
 use advent_of_code::year_2015::day_01::{floor, position};
 use advent_of_code::year_2015::day_02::Present;
@@ -36,15 +36,17 @@ pub fn wrapping_benchmark(c: &mut Criterion) {
 
     c.bench_function("Year 2015 Day 2 - wrapping paper/0x0x0", |b| {
         b.iter(|| {
-            let present = Present::from_str(black_box("0x0x0")).unwrap();
-            present.wrapping_paper_needed();
+            if let Some(present) = Present::from_str(black_box("0x0x0")) {
+                present.wrapping_paper_needed();
+            }
         });
     });
     c.bench_function("Year 2015 Day 2 - wrapping paper/file", |b| {
         b.iter(|| {
             let presents: Vec<Present> = contents
                 .lines()
-                .map(|line| Present::from_str(line).unwrap())
+                .map(|s| Present::from_str(s))
+                .filter_map(|result| result.ok())
                 .collect();
 
             let _: u32 = presents
@@ -60,15 +62,17 @@ pub fn ribbon_benchmark(c: &mut Criterion) {
 
     c.bench_function("Year 2015 Day 2 - ribbon/0x0x0", |b| {
         b.iter(|| {
-            let present = Present::from_str(black_box("0x0x0")).unwrap();
-            present.ribbon_needed();
+            if let Some(present) = Present::from_str(black_box("0x0x0")) {
+                present.ribbon_needed();
+            }
         });
     });
     c.bench_function("Year 2015 Day 2 - ribbon/file", |b| {
         b.iter(|| {
             let presents: Vec<Present> = contents
                 .lines()
-                .map(|line| Present::from_str(line).unwrap())
+                .map(|s| Present::from_str(s))
+                .filter_map(|result| result.ok())
                 .collect();
 
             let _: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();

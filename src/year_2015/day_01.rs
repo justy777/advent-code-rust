@@ -74,9 +74,9 @@ impl InfiniteBuilding {
 /// let f = floor(b")())())");
 /// assert_eq!(f, -3);
 /// ```
-pub fn floor(instructions: &[u8]) -> i32 {
+pub fn floor(input: &[u8]) -> i32 {
     let mut building = InfiniteBuilding::new();
-    instructions.iter().for_each(|c| building.apply(c));
+    input.iter().for_each(|c| building.apply(c));
     building.floor
 }
 
@@ -96,13 +96,13 @@ pub fn floor(instructions: &[u8]) -> i32 {
 /// let p = position(b"()())", -1);
 /// assert_eq!(p, Some(5));
 /// ```
-pub fn position(parentheses: &[u8], floor: i32) -> Option<i32> {
+pub fn position(input: &[u8], floor: i32) -> Option<i32> {
     if floor == 0 {
         return Some(0);
     }
 
     let mut building = InfiniteBuilding::new();
-    for c in parentheses.iter() {
+    for c in input.iter() {
         building.apply(c);
         if building.floor == floor {
             return Some(building.position);

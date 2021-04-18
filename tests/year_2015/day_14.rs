@@ -8,18 +8,18 @@ use advent_of_code::year_2015::day_14::{
 #[test]
 fn test_distance_winning_reindeer_traveled() {
     let mut reindeer = Vec::new();
-    reindeer.push(
-        Reindeer::from_str(
-            "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
-        )
-        .unwrap(),
-    );
-    reindeer.push(
-        Reindeer::from_str(
-            "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
-        )
-        .unwrap(),
-    );
+
+    if let Ok(comet) = Reindeer::from_str(
+        "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
+    ) {
+        reindeer.push(comet);
+    };
+
+    if let Ok(dancer) = Reindeer::from_str(
+        "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
+    ) {
+        reindeer.push(dancer);
+    };
 
     let max = distance_winning_reindeer_traveled(&reindeer, 1000);
     assert_eq!(max, 1120);
@@ -28,18 +28,18 @@ fn test_distance_winning_reindeer_traveled() {
 #[test]
 fn test_points_awarded_winning_reindeer() {
     let mut reindeer = Vec::new();
-    reindeer.push(
-        Reindeer::from_str(
-            "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
-        )
-        .unwrap(),
-    );
-    reindeer.push(
-        Reindeer::from_str(
-            "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
-        )
-        .unwrap(),
-    );
+
+    if let Ok(comet) = Reindeer::from_str(
+        "Comet can fly 14 km/s for 10 seconds, but then must rest for 127 seconds.",
+    ) {
+        reindeer.push(comet);
+    };
+
+    if let Ok(dancer) = Reindeer::from_str(
+        "Dancer can fly 16 km/s for 11 seconds, but then must rest for 162 seconds.",
+    ) {
+        reindeer.push(dancer);
+    };
 
     let max = points_awarded_winning_reindeer(&reindeer, 1000);
     assert_eq!(max, 689);
@@ -52,7 +52,8 @@ fn test_distance_winning_reindeer_traveled_input_file() {
 
     let reindeer: Vec<Reindeer> = contents
         .lines()
-        .map(|line| Reindeer::from_str(line).unwrap())
+        .map(|s| Reindeer::from_str(s))
+        .filter_map(|result| result.ok())
         .collect();
 
     let max = distance_winning_reindeer_traveled(&reindeer, 2503);
@@ -66,7 +67,8 @@ fn test_points_awarded_winning_reindeer_input_file() {
 
     let reindeer: Vec<Reindeer> = contents
         .lines()
-        .map(|line| Reindeer::from_str(line).unwrap())
+        .map(|s| Reindeer::from_str(s))
+        .filter_map(|result| result.ok())
         .collect();
 
     let max = points_awarded_winning_reindeer(&reindeer, 2503);

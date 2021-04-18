@@ -4,10 +4,10 @@ The elves are running low on wrapping paper, and so they need to submit an order
 They have a list of the dimensions of each present, and only want to order exactly as much as they need.
 */
 
+use std::{cmp, fmt};
 use std::error::Error;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
-use std::{cmp, fmt};
 
 use regex::Regex;
 
@@ -89,10 +89,10 @@ impl FromStr for Present {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let parse = |key| caps.name(key).unwrap().as_str().parse::<u32>().unwrap();
-                let length = parse("length");
-                let width = parse("width");
-                let height = parse("height");
+                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<u32>().unwrap();
+                let length = parse_int("length");
+                let width = parse_int("width");
+                let height = parse_int("height");
 
                 Ok(Present {
                     length,

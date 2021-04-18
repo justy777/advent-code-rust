@@ -29,30 +29,35 @@ fn test_light_grid_follow_instruction_bad_input() {
 #[test]
 fn test_light_grid_apply_operation() {
     let mut grid = LightGrid::<SimpleBulb>::new();
-    let instruction = LightInstruction::from_str("turn on 0,0 through 999,999").unwrap();
-    grid.apply_operation(instruction);
+    if let Ok(instruction) = LightInstruction::from_str("turn on 0,0 through 999,999") {
+        grid.apply_operation(instruction);
+    };
     assert_eq!(grid.total_brightness(), 1000000);
 
-    let instruction = LightInstruction::from_str("turn off 499,499 through 500,500").unwrap();
-    grid.apply_operation(instruction);
+    if let Ok(instruction) = LightInstruction::from_str("turn off 499,499 through 500,500") {
+        grid.apply_operation(instruction);
+    };
     assert_eq!(grid.total_brightness(), 999996);
 
     let mut grid = LightGrid::<SimpleBulb>::new();
-    let instruction = LightInstruction::from_str("toggle 0,0 through 999,0").unwrap();
-    grid.apply_operation(instruction);
+    if let Ok(instruction) = LightInstruction::from_str("toggle 0,0 through 999,0") {
+        grid.apply_operation(instruction);
+    };
     assert_eq!(grid.total_brightness(), 1000);
 }
 
 #[test]
 fn test_light_grid_increase_brightness() {
     let mut grid = LightGrid::<AdjustableBulb>::new();
-    let instruction = LightInstruction::from_str("turn on 0,0 through 0,0").unwrap();
-    grid.apply_operation(instruction);
+    if let Ok(instruction) = LightInstruction::from_str("turn on 0,0 through 0,0") {
+        grid.apply_operation(instruction);
+    };
     assert_eq!(grid.total_brightness(), 1);
 
     let mut grid = LightGrid::<AdjustableBulb>::new();
-    let instruction = LightInstruction::from_str("toggle 0,0 through 999,999").unwrap();
-    grid.apply_operation(instruction);
+    if let Ok(instruction) = LightInstruction::from_str("toggle 0,0 through 999,999") {
+        grid.apply_operation(instruction);
+    };
     assert_eq!(grid.total_brightness(), 2000000);
 }
 
@@ -64,7 +69,8 @@ fn test_simple_bulbs_input_file() {
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
         .lines()
-        .map(|line| LightInstruction::from_str(line).unwrap())
+        .map(|s| LightInstruction::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|instruction| grid.apply_operation(instruction));
     let count = grid.total_brightness();
     assert_eq!(count, 543903);
@@ -78,7 +84,8 @@ fn test_adjustable_bulbs_input_file() {
     let mut grid = LightGrid::<AdjustableBulb>::new();
     contents
         .lines()
-        .map(|line| LightInstruction::from_str(line).unwrap())
+        .map(|s| LightInstruction::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|instruction| grid.apply_operation(instruction));
     let brightness = grid.total_brightness();
     assert_eq!(brightness, 14687245);

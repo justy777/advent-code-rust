@@ -40,7 +40,8 @@ fn test_wrapping_paper_needed_input_file() {
 
     let presents: Vec<Present> = contents
         .lines()
-        .map(|line| Present::from_str(line).unwrap())
+        .map(|s| Present::from_str(s))
+        .filter_map(|result| result.ok())
         .collect();
 
     let wrapping_paper_needed: u32 = presents
@@ -58,7 +59,8 @@ fn test_ribbon_needed_input_file() {
 
     let presents: Vec<Present> = contents
         .lines()
-        .map(|line| Present::from_str(line).unwrap())
+        .map(|s| Present::from_str(s))
+        .filter_map(|result| result.ok())
         .collect();
 
     let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();

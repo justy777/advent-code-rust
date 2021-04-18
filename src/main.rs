@@ -7,7 +7,7 @@ use advent_of_code::year_2015::day_03::InfiniteGrid;
 use advent_of_code::year_2015::day_04::find_number;
 use advent_of_code::year_2015::day_05::{is_nice_word, is_nice_word2};
 use advent_of_code::year_2015::day_06::{AdjustableBulb, LightGrid, LightInstruction, SimpleBulb};
-use advent_of_code::year_2015::day_07::Circuit;
+use advent_of_code::year_2015::day_07::{Circuit, CircuitInstruction};
 use advent_of_code::year_2015::day_08::{escape_string, reformat_string};
 use advent_of_code::year_2015::day_09::{Edge, Graph};
 use advent_of_code::year_2015::day_10::look_and_say;
@@ -55,7 +55,8 @@ fn run_2015_02() {
 
     let presents: Vec<Present> = contents
         .lines()
-        .map(|line| Present::from_str(line).unwrap())
+        .map(|s| Present::from_str(s))
+        .filter_map(|result| result.ok())
         .collect();
 
     let wrapping_paper_needed: u32 = presents
@@ -121,13 +122,13 @@ fn run_2015_05() {
     let contents =
         fs::read_to_string("input/2015/day-5.txt").expect("Failed to read file to string.");
 
-    let count = contents.lines().filter(|word| is_nice_word(word)).count();
+    let count = contents.lines().filter(|s| is_nice_word(s)).count();
     println!(
         "There are {} nice words with the first set of rules.",
         count
     );
 
-    let count = contents.lines().filter(|word| is_nice_word2(word)).count();
+    let count = contents.lines().filter(|s| is_nice_word2(s)).count();
     println!(
         "There are {} nice words with the second set of rules.",
         count
@@ -143,7 +144,8 @@ fn run_2015_06() {
     let mut grid = LightGrid::<SimpleBulb>::new();
     contents
         .lines()
-        .map(|line| LightInstruction::from_str(line).unwrap())
+        .map(|s| LightInstruction::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|instruction| grid.apply_operation(instruction));
     let count = grid.total_brightness();
     println!("There are {} lights lit.", count);
@@ -151,7 +153,8 @@ fn run_2015_06() {
     let mut grid = LightGrid::<AdjustableBulb>::new();
     contents
         .lines()
-        .map(|line| LightInstruction::from_str(line).unwrap())
+        .map(|s| LightInstruction::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|instruction| grid.apply_operation(instruction));
     let brightness = grid.total_brightness();
     println!("The total brightness is {}.", brightness);
@@ -163,16 +166,19 @@ fn run_2015_07() {
         fs::read_to_string("input/2015/day-7.txt").expect("Failed to read file to string.");
 
     let mut circuit = Circuit::new();
-    contents
-        .lines()
-        .for_each(|line| circuit.follow_instruction(line));
+    contents.lines()
+        .map(|s| CircuitInstruction::from_str(s))
+        .filter_map(|result| result.ok())
+        .for_each(|instruction| circuit.add_instruction(instruction));
     circuit.resolve_circuit();
 
     let signal_a = circuit.signal("a").unwrap();
     println!("The signal {} is provided to wire 'a'.", signal_a);
 
     circuit.reset_circuit();
-    circuit.follow_instruction("16076 -> b");
+    if let Ok(instruction) = CircuitInstruction::from_str("16076 -> b") {
+        circuit.add_instruction(instruction);
+    };
     circuit.resolve_circuit();
 
     let signal_a = circuit.signal("a").unwrap();
@@ -202,7 +208,8 @@ fn run_2015_09() {
     let mut graph = Graph::new();
     contents
         .lines()
-        .map(|line| Edge::from_str(line).unwrap())
+        .map(|s| Edge::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|edge| graph.add_edge(edge));
 
     let min = graph.shortest_path();
@@ -262,7 +269,8 @@ fn run_2015_13() {
     let mut plan = SeatingPlan::new();
     contents
         .lines()
-        .map(|line| SeatingPreference::from_str(line).unwrap())
+        .map(|s| SeatingPreference::from_str(s))
+        .filter_map(|result| result.ok())
         .for_each(|preference| plan.add_preference(preference));
 
     let max = plan.happiest_table();
@@ -298,7 +306,8 @@ fn run_2015_14() {
 
     let reindeer: Vec<Reindeer> = contents
         .lines()
-        .map(|line| Reindeer::from_str(line).unwrap())
+        .map(|s| Reindeer::from_str(s))
+        .filter_map(|result| result.ok())
         .collect();
 
     let max = distance_winning_reindeer_traveled(&reindeer, 2503);

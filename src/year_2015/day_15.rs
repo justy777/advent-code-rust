@@ -20,36 +20,14 @@ impl FromStr for Ingredient {
         match REGEX.captures(s) {
             Some(caps) => {
                 let name = caps.name("name").unwrap().as_str().to_string();
-                let capacity = caps
-                    .name("capacity")
-                    .unwrap()
-                    .as_str()
-                    .parse::<i32>()
-                    .unwrap();
-                let durability = caps
-                    .name("durability")
-                    .unwrap()
-                    .as_str()
-                    .parse::<i32>()
-                    .unwrap();
-                let flavor = caps
-                    .name("flavor")
-                    .unwrap()
-                    .as_str()
-                    .parse::<i32>()
-                    .unwrap();
-                let texture = caps
-                    .name("texture")
-                    .unwrap()
-                    .as_str()
-                    .parse::<i32>()
-                    .unwrap();
-                let calories = caps
-                    .name("calories")
-                    .unwrap()
-                    .as_str()
-                    .parse::<i32>()
-                    .unwrap();
+
+                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<i32>().unwrap();
+
+                let capacity = parse_int("capacity");
+                let durability = parse_int("durability");
+                let flavor = parse_int("flavor");
+                let texture = parse_int("texture");
+                let calories = parse_int("calories");
 
                 Ok(Ingredient {
                     name,
