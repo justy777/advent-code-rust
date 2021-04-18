@@ -1,7 +1,7 @@
 use std::fmt::Debug;
 use std::str::FromStr;
 
-use regex::Captures;
+use regex::{Captures, Match};
 
 /// A wrapper to hide repetitive method calls parsing capture groups.
 pub(crate) struct CapturesWrapper<'t>(Captures<'t>);
@@ -28,5 +28,9 @@ impl<'t> CapturesWrapper<'t> {
         <T as FromStr>::Err: Debug,
     {
         self.0.name(key).unwrap().as_str().parse().unwrap()
+    }
+
+    pub(crate) fn name(&self, name: &str) -> Option<Match<'t>> {
+        self.0.name(name)
     }
 }

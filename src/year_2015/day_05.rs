@@ -5,22 +5,22 @@ Santa needs help figuring out which strings in his text file are naughty or nice
 */
 
 /// Counts the vowels in the provided `str`.
-fn count_vowels(s: &str) -> usize {
+fn count_vowels(s: &[u8]) -> usize {
     lazy_static! {
-        static ref VOWELS: &'static str = "aeiou";
+        static ref VOWELS: &'static [u8] = b"aeiou";
     }
-    s.chars().filter(|c| VOWELS.contains(*c)).count()
+    s.iter().filter(|c| VOWELS.contains(*c)).count()
 }
 
 /// Returns `true` if str contains double letters; `false` otherwise.
-fn contains_double_letter(s: &str) -> bool {
+fn contains_double_letter(s: &[u8]) -> bool {
     if s.len() < 2 {
         return false;
     }
 
     let mut last_char = None;
     let mut found = false;
-    for c in s.chars() {
+    for c in s.iter() {
         if last_char == Some(c) {
             found = true;
             break;
@@ -77,11 +77,13 @@ fn contains_forbidden_str(s: &str) -> bool {
 /// assert!(!is_nice);
 /// ```
 pub fn is_nice_word(s: &str) -> bool {
-    count_vowels(s) >= 3 && contains_double_letter(s) && !contains_forbidden_str(s)
+    count_vowels(s.as_ref()) >= 3
+        && contains_double_letter(s.as_ref())
+        && !contains_forbidden_str(s)
 }
 
 /// Returns `true` if contains a pair of two letters that appears at least twice in the provided str without overlapping; `false` otherwise.
-fn contains_pair_of_letters_twice(s: &str) -> bool {
+fn contains_pair_of_letters_twice(s: &[u8]) -> bool {
     if s.len() < 4 {
         return false;
     }
@@ -98,13 +100,13 @@ fn contains_pair_of_letters_twice(s: &str) -> bool {
 }
 
 /// Returns `true` if contains at least one letter which repeats with exactly one letter between them; `false` otherwise.
-fn contains_letter_that_repeats_with_letter_between(s: &str) -> bool {
+fn contains_letter_that_repeats_with_letter_between(s: &[u8]) -> bool {
     if s.len() < 3 {
         return false;
     }
     let mut found = false;
     for i in 0..(s.len() - 2) {
-        if s.chars().nth(i) == s.chars().nth(i + 2) {
+        if s[i] == s[i + 2] {
             found = true;
             break;
         }
@@ -140,5 +142,6 @@ fn contains_letter_that_repeats_with_letter_between(s: &str) -> bool {
 /// assert!(!is_nice);
 /// ```
 pub fn is_nice_word2(s: &str) -> bool {
-    contains_pair_of_letters_twice(s) && contains_letter_that_repeats_with_letter_between(s)
+    contains_pair_of_letters_twice(s.as_ref())
+        && contains_letter_that_repeats_with_letter_between(s.as_ref())
 }

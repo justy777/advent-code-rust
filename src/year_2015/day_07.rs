@@ -1,5 +1,9 @@
-use std::collections::HashMap;
 use std::str::FromStr;
+
+use hashbrown::HashMap;
+use regex::Regex;
+
+use crate::util::CapturesWrapper;
 
 #[derive(Clone)]
 enum Endpoint {
@@ -23,8 +27,8 @@ enum Gate {
     Not(Endpoint),
     And(Endpoint, Endpoint),
     Or(Endpoint, Endpoint),
-    LeftShift(Endpoint, u16),
-    RightShift(Endpoint, u16),
+    LeftShift(Endpoint, Endpoint),
+    RightShift(Endpoint, Endpoint),
 }
 
 pub struct Circuit {
@@ -67,8 +71,8 @@ impl Circuit {
         let signal = match wires.get(name).unwrap() {
             Gate::And(v1, v2) => self.resolve_endpoint(v1) & self.resolve_endpoint(v2),
             Gate::Or(v1, v2) => self.resolve_endpoint(v1) | self.resolve_endpoint(v2),
-            Gate::LeftShift(v1, v2) => self.resolve_endpoint(v1) << *v2,
-            Gate::RightShift(v1, v2) => self.resolve_endpoint(v1) >> *v2,
+            Gate::LeftShift(v1, v2) => self.resolve_endpoint(v1) << self.resolve_endpoint(v2),
+            Gate::RightShift(v1, v2) => self.resolve_endpoint(v1) >> self.resolve_endpoint(v2),
             Gate::Not(v1) => !self.resolve_endpoint(v1),
             Gate::NoOp(v1) => self.resolve_endpoint(v1),
         };
@@ -98,70 +102,43 @@ pub struct CircuitInstruction {
 impl FromStr for CircuitInstruction {
     type Err = ();
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        if s.contains("AND") {
-            let mut iter = s.split(' ');
-            let operand1 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let operand2 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let wire = String::from(iter.next().unwrap());
-            Ok(CircuitInstruction {
-                wire,
-                output: Gate::And(operand1, operand2),
-            })
-        } else if s.contains("OR") {
-            let mut iter = s.split(' ');
-            let operand1 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let operand2 = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let wire = String::from(iter.next().unwrap());
-            Ok(CircuitInstruction {
-                wire,
-                output: Gate::Or(operand1, operand2),
-            })
-        } else if s.contains("LSHIFT") {
-            let mut iter = s.split(' ');
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let shift = iter.next().unwrap().parse::<u16>().unwrap();
-            iter.next();
-            let wire = String::from(iter.next().unwrap());
-            Ok(CircuitInstruction {
-                wire,
-                output: Gate::LeftShift(operand, shift),
-            })
-        } else if s.contains("RSHIFT") {
-            let mut iter = s.split(' ');
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let shift = iter.next().unwrap().parse::<u16>().unwrap();
-            iter.next();
-            let wire = String::from(iter.next().unwrap());
-            Ok(CircuitInstruction {
-                wire,
-                output: Gate::RightShift(operand, shift),
-            })
-        } else if s.contains("NOT") {
-            let mut iter = s.split(' ');
-            iter.next();
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let wire = String::from(iter.next().unwrap());
-            Ok(CircuitInstruction {
-                wire,
-                output: Gate::Not(operand),
-            })
-        } else {
-            let mut iter = s.split(' ');
-            let operand = Endpoint::from(iter.next().unwrap());
-            iter.next();
-            let wire = String::from(iter.next().unwrap());
-            Ok(CircuitInstruction {
-                wire,
-                output: Gate::NoOp(operand),
-            })
+    fn from_str(s: &str) -> Result<CircuitInstruction, ()> {
+        lazy_static! {
+            static ref BINARY: Regex = Regex::new(r"^(?P<lhs>\w+|\d+) (?P<operation>AND|OR|LSHIFT|RSHIFT) (?P<rhs>\w+|\d+) -> (?P<wire>\w+)$").unwrap();
         }
+        if let Some(caps) = BINARY.captures(s) {
+            let caps = CapturesWrapper::new(caps);
+            let lhs = Endpoint::from(caps.as_str("lhs"));
+            let rhs = Endpoint::from(caps.as_str("rhs"));
+            let wire = caps.as_string("wire");
+            let output = match caps.as_str("operation") {
+                "AND" => Gate::And(lhs, rhs),
+                "OR" => Gate::Or(lhs, rhs),
+                "LSHIFT" => Gate::LeftShift(lhs, rhs),
+                "RSHIFT" => Gate::RightShift(lhs, rhs),
+                _ => unreachable!(),
+            };
+
+            return Ok(CircuitInstruction { wire, output });
+        };
+
+        lazy_static! {
+            static ref UNARY: Regex =
+                Regex::new(r"^(?P<operator>NOT)?\s?(?P<operand>\w+|\d+) -> (?P<wire>\w+)$")
+                    .unwrap();
+        }
+        if let Some(caps) = UNARY.captures(s) {
+            let caps = CapturesWrapper::new(caps);
+            let wire = caps.as_string("wire");
+            let operand = Endpoint::from(caps.as_str("operand"));
+            let output = match caps.name("operator") {
+                Some(_) => Gate::Not(operand),
+                None => Gate::NoOp(operand),
+            };
+
+            return Ok(CircuitInstruction { wire, output });
+        };
+
+        Err(())
     }
 }

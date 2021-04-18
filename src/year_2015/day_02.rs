@@ -5,9 +5,9 @@ They have a list of the dimensions of each present, and only want to order exact
 */
 
 use std::error::Error;
+use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
-use std::{cmp, fmt};
 
 use regex::Regex;
 
@@ -46,9 +46,9 @@ impl Present {
         let area_2 = self.width * self.height;
         let area_3 = self.height * self.length;
 
-        let min_area = cmp::min(area_1, cmp::min(area_2, area_3));
+        let min_area = area_1.min(area_2).min(area_3);
 
-        (2 * (area_1 + area_2 + area_3)) + min_area
+        2 * (area_1 + area_2 + area_3) + min_area
     }
 
     /// Calculates the ribbon needed to wrap the present in feet.
@@ -74,7 +74,7 @@ impl Present {
     /// ```
     pub fn ribbon_needed(&self) -> u32 {
         let needed_for_bow = self.length * self.width * self.height;
-        let max = cmp::max(self.length, cmp::max(self.width, self.height));
+        let max = self.length.max(self.width).max(self.height);
         let smallest_perimeter = 2 * (self.length + self.width + self.height - max);
 
         smallest_perimeter + needed_for_bow

@@ -1,7 +1,7 @@
-use std::collections::{HashMap, HashSet};
 use std::ops::Neg;
 use std::str::FromStr;
 
+use hashbrown::{HashMap, HashSet};
 use itertools::Itertools;
 use regex::Regex;
 

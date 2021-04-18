@@ -1,6 +1,6 @@
-use std::collections::HashMap;
 use std::str::FromStr;
 
+use hashbrown::HashMap;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
