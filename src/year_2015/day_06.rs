@@ -13,6 +13,8 @@ use std::str::FromStr;
 
 use regex::Regex;
 
+use crate::util::CapturesWrapper;
+
 /// Represents a point or bulb in the grid.
 #[derive(Debug)]
 pub struct Point {
@@ -193,18 +195,18 @@ impl FromStr for LightInstruction {
 
         match REGEX.captures(s) {
             Some(caps) => {
-                let operation = match caps.name("operation").unwrap().as_str() {
+                let caps = CapturesWrapper::new(caps);
+                let operation = match caps.as_str("operation") {
                     "toggle" => Operation::Toggle,
                     "turn on" => Operation::TurnOn,
                     "turn off" => Operation::TurnOff,
                     _ => unimplemented!(),
                 };
 
-                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<usize>().unwrap();
-                let x1 = parse_int("x1");
-                let y1 = parse_int("y1");
-                let x2 = parse_int("x2");
-                let y2 = parse_int("y2");
+                let x1 = caps.parse("x1");
+                let y1 = caps.parse("y1");
+                let x2 = caps.parse("x2");
+                let y2 = caps.parse("y2");
 
                 let start_point = Point { x: x1, y: y1 };
                 let end_point = Point { x: x2, y: y2 };

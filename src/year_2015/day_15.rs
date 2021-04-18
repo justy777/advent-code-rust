@@ -1,6 +1,8 @@
 use regex::Regex;
 use std::str::FromStr;
 
+use crate::util::CapturesWrapper;
+
 struct Ingredient {
     name: String,
     capacity: i32,
@@ -19,15 +21,13 @@ impl FromStr for Ingredient {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let name = caps.name("name").unwrap().as_str().to_string();
-
-                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<i32>().unwrap();
-
-                let capacity = parse_int("capacity");
-                let durability = parse_int("durability");
-                let flavor = parse_int("flavor");
-                let texture = parse_int("texture");
-                let calories = parse_int("calories");
+                let caps = CapturesWrapper::new(caps);
+                let name = caps.as_string("name");
+                let capacity = caps.parse("capacity");
+                let durability = caps.parse("durability");
+                let flavor = caps.parse("flavor");
+                let texture = caps.parse("texture");
+                let calories = caps.parse("calories");
 
                 Ok(Ingredient {
                     name,

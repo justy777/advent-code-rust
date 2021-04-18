@@ -11,6 +11,8 @@ use std::{cmp, fmt};
 
 use regex::Regex;
 
+use crate::util::CapturesWrapper;
+
 /// Represents the dimensions of a present in feet.
 #[derive(Debug)]
 pub struct Present {
@@ -89,10 +91,10 @@ impl FromStr for Present {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<u32>().unwrap();
-                let length = parse_int("length");
-                let width = parse_int("width");
-                let height = parse_int("height");
+                let caps = CapturesWrapper::new(caps);
+                let length = caps.parse("length");
+                let width = caps.parse("width");
+                let height = caps.parse("height");
 
                 Ok(Present {
                     length,

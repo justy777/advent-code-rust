@@ -5,6 +5,8 @@ use std::str::FromStr;
 use itertools::Itertools;
 use regex::Regex;
 
+use crate::util::CapturesWrapper;
+
 pub struct SeatingPlan {
     pub guests: HashSet<String>,
     preferences: HashMap<[String; 2], i32>,
@@ -77,11 +79,11 @@ impl FromStr for SeatingPreference {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let parse_str = |key| caps.name(key).unwrap().as_str();
-                let guest = parse_str("guest").to_string();
-                let neighbour = parse_str("neighbour").to_string();
-                let operative_word = parse_str("operative");
-                let mut happiness = parse_str("happiness").parse::<i32>().unwrap();
+                let caps = CapturesWrapper::new(caps);
+                let guest = caps.as_string("guest");
+                let neighbour = caps.as_string("neighbour");
+                let operative_word = caps.as_str("operative");
+                let mut happiness = caps.parse::<i32>("happiness");
                 if operative_word == "lose" {
                     happiness = happiness.neg();
                 }

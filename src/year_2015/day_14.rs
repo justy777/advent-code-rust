@@ -3,6 +3,8 @@ use std::str::FromStr;
 
 use regex::Regex;
 
+use crate::util::CapturesWrapper;
+
 pub struct Reindeer {
     name: String,
     flying_speed: u32,
@@ -19,13 +21,11 @@ impl FromStr for Reindeer {
         }
         match REGEX.captures(s) {
             Some(caps) => {
-                let name = caps.name("name").unwrap().as_str().to_string();
-
-                let parse_int = |key| caps.name(key).unwrap().as_str().parse::<u32>().unwrap();
-
-                let flying_speed = parse_int("flying_speed");
-                let flying_time = parse_int("flying_time");
-                let rest_time = parse_int("rest_time");
+                let caps = CapturesWrapper::new(caps);
+                let name = caps.as_string("name");
+                let flying_speed = caps.parse("flying_speed");
+                let flying_time = caps.parse("flying_time");
+                let rest_time = caps.parse("rest_time");
 
                 Ok(Reindeer {
                     name,
