@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::str::FromStr;
 
 use hashbrown::HashMap;
@@ -6,84 +7,82 @@ use regex::Regex;
 use crate::util::CapturesWrapper;
 
 #[derive(Clone)]
-enum Endpoint {
+enum Signal {
     Source(u16),
     Wire(String),
 }
 
-impl From<&str> for Endpoint {
-    fn from(s: &str) -> Endpoint {
+impl From<&str> for Signal {
+    fn from(s: &str) -> Signal {
         let test = s.parse::<u16>();
         match test {
-            Ok(value) => Endpoint::Source(value),
-            Err(_) => Endpoint::Wire(String::from(s)),
+            Ok(value) => Signal::Source(value),
+            Err(_) => Signal::Wire(String::from(s)),
         }
     }
 }
 
 #[derive(Clone)]
 enum Gate {
-    NoOp(Endpoint),
-    Not(Endpoint),
-    And(Endpoint, Endpoint),
-    Or(Endpoint, Endpoint),
-    LeftShift(Endpoint, Endpoint),
-    RightShift(Endpoint, Endpoint),
+    NoOp(Signal),
+    Not(Signal),
+    And(Signal, Signal),
+    Or(Signal, Signal),
+    LeftShift(Signal, Signal),
+    RightShift(Signal, Signal),
 }
 
 pub struct Circuit {
     wires: HashMap<String, Gate>,
-    signals: HashMap<String, u16>,
+    signals: RefCell<HashMap<String, u16>>,
 }
 
 impl Circuit {
     pub fn new() -> Circuit {
         Circuit {
             wires: HashMap::new(),
-            signals: HashMap::new(),
+            signals: RefCell::new(HashMap::new()),
         }
     }
 
-    pub fn signal(&self, wire: &str) -> Option<&u16> {
-        self.signals.get(wire)
+    pub fn signal(&self, wire: &str) -> Option<u16> {
+        self.signals.borrow().get(wire).copied()
     }
 
     pub fn add_instruction(&mut self, instruction: CircuitInstruction) {
         self.wires.insert(instruction.wire, instruction.output);
     }
 
-    pub fn resolve_circuit(&mut self) {
-        let wires = self.wires.clone();
-        wires.keys().for_each(|key| {
-            self.resolve_signal(key);
+    pub fn resolve(&mut self) {
+        self.wires.keys().for_each(|key| {
+            self.resolve_wire(key);
         });
     }
 
-    pub fn reset_circuit(&mut self) {
-        self.signals = HashMap::new();
+    pub fn reset(&mut self) {
+        self.signals.borrow_mut().clear();
     }
 
-    fn resolve_signal(&mut self, name: &str) -> u16 {
-        if self.signals.contains_key(name) {
-            return *self.signals.get(name).unwrap();
+    fn resolve_wire(&self, name: &str) -> u16 {
+        if self.signals.borrow().contains_key(name) {
+            return *self.signals.borrow().get(name).unwrap();
         }
-        let wires = self.wires.clone();
-        let signal = match wires.get(name).unwrap() {
-            Gate::And(v1, v2) => self.resolve_endpoint(v1) & self.resolve_endpoint(v2),
-            Gate::Or(v1, v2) => self.resolve_endpoint(v1) | self.resolve_endpoint(v2),
-            Gate::LeftShift(v1, v2) => self.resolve_endpoint(v1) << self.resolve_endpoint(v2),
-            Gate::RightShift(v1, v2) => self.resolve_endpoint(v1) >> self.resolve_endpoint(v2),
-            Gate::Not(v1) => !self.resolve_endpoint(v1),
-            Gate::NoOp(v1) => self.resolve_endpoint(v1),
+        let signal = match self.wires.get(name).unwrap() {
+            Gate::And(v1, v2) => self.resolve_signal(v1) & self.resolve_signal(v2),
+            Gate::Or(v1, v2) => self.resolve_signal(v1) | self.resolve_signal(v2),
+            Gate::LeftShift(v1, v2) => self.resolve_signal(v1) << self.resolve_signal(v2),
+            Gate::RightShift(v1, v2) => self.resolve_signal(v1) >> self.resolve_signal(v2),
+            Gate::Not(v1) => !self.resolve_signal(v1),
+            Gate::NoOp(v1) => self.resolve_signal(v1),
         };
-        self.signals.insert(String::from(name), signal);
+        self.signals.borrow_mut().insert(String::from(name), signal);
         signal
     }
 
-    fn resolve_endpoint(&mut self, endpoint: &Endpoint) -> u16 {
-        match endpoint {
-            Endpoint::Source(value) => *value,
-            Endpoint::Wire(name) => self.resolve_signal(&name),
+    fn resolve_signal(&self, signal: &Signal) -> u16 {
+        match signal {
+            Signal::Source(value) => *value,
+            Signal::Wire(name) => self.resolve_wire(name),
         }
     }
 }
@@ -108,8 +107,8 @@ impl FromStr for CircuitInstruction {
         }
         if let Some(caps) = BINARY.captures(s) {
             let caps = CapturesWrapper::new(caps);
-            let lhs = Endpoint::from(caps.as_str("lhs"));
-            let rhs = Endpoint::from(caps.as_str("rhs"));
+            let lhs = Signal::from(caps.as_str("lhs"));
+            let rhs = Signal::from(caps.as_str("rhs"));
             let wire = caps.as_string("wire");
             let output = match caps.as_str("operation") {
                 "AND" => Gate::And(lhs, rhs),
@@ -130,7 +129,7 @@ impl FromStr for CircuitInstruction {
         if let Some(caps) = UNARY.captures(s) {
             let caps = CapturesWrapper::new(caps);
             let wire = caps.as_string("wire");
-            let operand = Endpoint::from(caps.as_str("operand"));
+            let operand = Signal::from(caps.as_str("operand"));
             let output = match caps.name("operator") {
                 Some(_) => Gate::Not(operand),
                 None => Gate::NoOp(operand),

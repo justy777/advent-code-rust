@@ -171,16 +171,16 @@ fn run_2015_07() {
         .map(|s| CircuitInstruction::from_str(s))
         .filter_map(|result| result.ok())
         .for_each(|instruction| circuit.add_instruction(instruction));
-    circuit.resolve_circuit();
+    circuit.resolve();
 
     let signal_a = circuit.signal("a").unwrap();
     println!("The signal {} is provided to wire 'a'.", signal_a);
 
-    circuit.reset_circuit();
+    circuit.reset();
     if let Ok(instruction) = CircuitInstruction::from_str("16076 -> b") {
         circuit.add_instruction(instruction);
     };
-    circuit.resolve_circuit();
+    circuit.resolve();
 
     let signal_a = circuit.signal("a").unwrap();
     println!("The signal {} is provided to wire 'a'.", signal_a);
