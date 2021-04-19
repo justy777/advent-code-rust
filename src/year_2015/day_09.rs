@@ -2,6 +2,9 @@ use std::str::FromStr;
 
 use hashbrown::{HashMap, HashSet};
 use itertools::Itertools;
+use regex::Regex;
+
+use crate::util::CapturesWrapper;
 
 pub struct Graph {
     vertices: HashSet<String>,
@@ -17,15 +20,15 @@ impl Graph {
     }
 
     pub fn add_edge(&mut self, edge: Edge) {
-        self.vertices.insert(edge.source.clone());
+        self.vertices.insert(edge.origin.clone());
         self.vertices.insert(edge.destination.clone());
-        let mut edge_key = [edge.source, edge.destination];
+        let mut edge_key = [edge.origin, edge.destination];
         edge_key.sort();
         self.edges.insert(edge_key, edge.weight);
     }
 
-    fn weight(&self, source: &str, destination: &str) -> &u32 {
-        let mut edge_key = [String::from(source), String::from(destination)];
+    fn weight(&self, origin: &str, destination: &str) -> &u32 {
+        let mut edge_key = [String::from(origin), String::from(destination)];
         edge_key.sort();
         self.edges.get(&edge_key).unwrap()
     }
@@ -66,7 +69,7 @@ impl Default for Graph {
 }
 
 pub struct Edge {
-    source: String,
+    origin: String,
     destination: String,
     weight: u32,
 }
@@ -74,16 +77,23 @@ pub struct Edge {
 impl FromStr for Edge {
     type Err = ();
 
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let s: Vec<&str> = s.split(' ').collect();
-        let source = s[0].to_string();
-        let destination = s[2].to_string();
-        let weight = s[4].parse::<u32>().unwrap();
+    fn from_str(s: &str) -> Result<Edge, ()> {
+        lazy_static! {
+            static ref REGEX: Regex =
+                Regex::new(r"^(?P<origin>\w+) to (?P<destination>\w+) = (?P<weight>\d+)$").unwrap();
+        }
+        if let Some(caps) = REGEX.captures(s) {
+            let caps = CapturesWrapper::new(caps);
+            let origin = caps.as_string("origin");
+            let destination = caps.as_string("destination");
+            let weight = caps.parse("weight");
 
-        Ok(Edge {
-            source,
-            destination,
-            weight,
-        })
+            return Ok(Edge {
+                origin,
+                destination,
+                weight,
+            });
+        };
+        Err(())
     }
 }
