@@ -4,11 +4,11 @@
 Santa needs help figuring out which strings in his text file are naughty or nice.
 */
 
+use once_cell::sync::Lazy;
+
 /// Counts the vowels in the provided `str`.
 fn count_vowels(s: &[u8]) -> usize {
-    lazy_static! {
-        static ref VOWELS: &'static [u8] = b"aeiou";
-    }
+    static VOWELS: Lazy<&'static [u8]> = Lazy::new(|| b"aeiou");
     s.iter().filter(|c| VOWELS.contains(*c)).count()
 }
 
@@ -38,9 +38,7 @@ fn contains_forbidden_str(s: &str) -> bool {
         return false;
     }
 
-    lazy_static! {
-        static ref FORBIDDEN_STRINGS: [&'static str; 4] = ["ab", "cd", "pq", "xy"];
-    }
+    static FORBIDDEN_STRINGS: Lazy<[&'static str; 4]> = Lazy::new(|| ["ab", "cd", "pq", "xy"]);
     FORBIDDEN_STRINGS.iter().any(|pat| s.contains(pat))
 }
 

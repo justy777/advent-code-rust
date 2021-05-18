@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::str::FromStr;
 
 use hashbrown::HashMap;
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
@@ -102,9 +103,10 @@ impl FromStr for CircuitInstruction {
     type Err = ();
 
     fn from_str(s: &str) -> Result<CircuitInstruction, ()> {
-        lazy_static! {
-            static ref BINARY: Regex = Regex::new(r"^(?P<lhs>\w+|\d+) (?P<operation>AND|OR|LSHIFT|RSHIFT) (?P<rhs>\w+|\d+) -> (?P<wire>\w+)$").unwrap();
-        }
+        static BINARY: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<lhs>\w+|\d+) (?P<operation>AND|OR|LSHIFT|RSHIFT) (?P<rhs>\w+|\d+) -> (?P<wire>\w+)$").unwrap()
+        });
+
         if let Some(caps) = BINARY.captures(s) {
             let caps = CapturesWrapper::new(caps);
             let lhs = Signal::from(caps.as_str("lhs"));
@@ -121,11 +123,10 @@ impl FromStr for CircuitInstruction {
             return Ok(CircuitInstruction { wire, output });
         };
 
-        lazy_static! {
-            static ref UNARY: Regex =
-                Regex::new(r"^(?P<operator>NOT)?\s?(?P<operand>\w+|\d+) -> (?P<wire>\w+)$")
-                    .unwrap();
-        }
+        static UNARY: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<operator>NOT)?\s?(?P<operand>\w+|\d+) -> (?P<wire>\w+)$").unwrap()
+        });
+
         if let Some(caps) = UNARY.captures(s) {
             let caps = CapturesWrapper::new(caps);
             let wire = caps.as_string("wire");

@@ -3,6 +3,7 @@ use std::str::FromStr;
 
 use hashbrown::{HashMap, HashSet};
 use itertools::Itertools;
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
@@ -74,9 +75,10 @@ impl FromStr for SeatingPreference {
     type Err = ();
 
     fn from_str(s: &str) -> Result<SeatingPreference, Self::Err> {
-        lazy_static! {
-            static ref REGEX: Regex = Regex::new(r"^(?P<guest>\w+) would (?P<operative>gain|lose) (?P<happiness>\d+) happiness units by sitting next to (?P<neighbour>\w+).$").unwrap();
-        }
+        static REGEX: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<guest>\w+) would (?P<operative>gain|lose) (?P<happiness>\d+) happiness units by sitting next to (?P<neighbour>\w+).$").unwrap()
+        });
+
         match REGEX.captures(s) {
             Some(caps) => {
                 let caps = CapturesWrapper::new(caps);

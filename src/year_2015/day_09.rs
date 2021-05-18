@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 use hashbrown::{HashMap, HashSet};
 use itertools::Itertools;
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
@@ -78,10 +79,10 @@ impl FromStr for Edge {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Edge, ()> {
-        lazy_static! {
-            static ref REGEX: Regex =
-                Regex::new(r"^(?P<origin>\w+) to (?P<destination>\w+) = (?P<weight>\d+)$").unwrap();
-        }
+        static REGEX: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<origin>\w+) to (?P<destination>\w+) = (?P<weight>\d+)$").unwrap()
+        });
+
         if let Some(caps) = REGEX.captures(s) {
             let caps = CapturesWrapper::new(caps);
             let origin = caps.as_string("origin");

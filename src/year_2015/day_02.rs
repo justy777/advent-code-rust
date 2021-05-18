@@ -9,6 +9,7 @@ use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
@@ -85,10 +86,8 @@ impl FromStr for Present {
     type Err = ParsePresentError;
 
     fn from_str(s: &str) -> Result<Present, ParsePresentError> {
-        lazy_static! {
-            static ref REGEX: Regex =
-                Regex::new(r"^(?P<length>\d+)x(?P<width>\d+)x(?P<height>\d+)$").unwrap();
-        }
+        static REGEX: Lazy<Regex> =
+            Lazy::new(|| Regex::new(r"^(?P<length>\d+)x(?P<width>\d+)x(?P<height>\d+)$").unwrap());
         match REGEX.captures(s) {
             Some(caps) => {
                 let caps = CapturesWrapper::new(caps);

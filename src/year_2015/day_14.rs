@@ -1,6 +1,7 @@
 use std::str::FromStr;
 
 use hashbrown::HashMap;
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
@@ -16,9 +17,10 @@ impl FromStr for Reindeer {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        lazy_static! {
-            static ref REGEX: Regex = Regex::new(r"^(?P<name>\w+) can fly (?P<flying_speed>\d+) km/s for (?P<flying_time>\d+) seconds, but then must rest for (?P<rest_time>\d+) seconds.$").unwrap();
-        }
+        static REGEX: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<name>\w+) can fly (?P<flying_speed>\d+) km/s for (?P<flying_time>\d+) seconds, but then must rest for (?P<rest_time>\d+) seconds.$").unwrap()
+        });
+
         match REGEX.captures(s) {
             Some(caps) => {
                 let caps = CapturesWrapper::new(caps);

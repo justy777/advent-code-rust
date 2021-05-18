@@ -11,6 +11,7 @@ use std::fmt;
 use std::fmt::{Display, Formatter};
 use std::str::FromStr;
 
+use once_cell::sync::Lazy;
 use regex::Regex;
 
 use crate::util::CapturesWrapper;
@@ -189,9 +190,9 @@ impl FromStr for LightInstruction {
     type Err = ParseInstructionError;
 
     fn from_str(s: &str) -> Result<LightInstruction, ParseInstructionError> {
-        lazy_static! {
-            static ref REGEX: Regex = Regex::new(r"^(?P<operation>toggle|turn on|turn off) (?P<x1>\d{1,3}),(?P<y1>\d{1,3}) through (?P<x2>\d{1,3}),(?P<y2>\d{1,3})$").unwrap();
-        }
+        static REGEX: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<operation>toggle|turn on|turn off) (?P<x1>\d{1,3}),(?P<y1>\d{1,3}) through (?P<x2>\d{1,3}),(?P<y2>\d{1,3})$").unwrap()
+        });
 
         match REGEX.captures(s) {
             Some(caps) => {

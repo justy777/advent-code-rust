@@ -1,3 +1,4 @@
+use once_cell::sync::Lazy;
 use regex::Regex;
 use std::str::FromStr;
 
@@ -16,9 +17,8 @@ impl FromStr for Ingredient {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        lazy_static! {
-            static ref REGEX: Regex = Regex::new(r"^(?P<name>\w+): capacity (?P<capacity>-?\d+), durability (?P<durability>-?\d+), flavor (?P<flavor>-?\d+), texture (?P<texture>-?\d+), calories (?P<calories>-?\d+)$").unwrap();
-        }
+        static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"^(?P<name>\w+): capacity (?P<capacity>-?\d+), durability (?P<durability>-?\d+), flavor (?P<flavor>-?\d+), texture (?P<texture>-?\d+), calories (?P<calories>-?\d+)$").unwrap());
+
         match REGEX.captures(s) {
             Some(caps) => {
                 let caps = CapturesWrapper::new(caps);

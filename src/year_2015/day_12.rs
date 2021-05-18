@@ -1,10 +1,10 @@
+use once_cell::sync::Lazy;
 use regex::Regex;
 use serde_json::Value;
 
 pub fn sum_numbers_in_str(s: &str) -> i32 {
-    lazy_static! {
-        static ref REGEX: Regex = Regex::new(r"-?\d+").unwrap();
-    }
+    static REGEX: Lazy<Regex> = Lazy::new(|| Regex::new(r"-?\d+").unwrap());
+
     REGEX
         .find_iter(s)
         .map(|mat| mat.as_str().parse::<i32>().unwrap())
