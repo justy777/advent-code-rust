@@ -24,7 +24,7 @@ impl Position {
     /// If an invalid direction is provided, `None` is returned.
     ///
     /// Moves are always exactly one to the north `^`, south `v`, east `>`, or west `<`.
-    fn move_direction(&self, direction: char) -> Option<Position> {
+    fn move_direction(self, direction: char) -> Option<Position> {
         match direction {
             '^' => Some(Position {
                 x: self.x,
@@ -65,6 +65,7 @@ impl InfiniteGrid {
     ///
     /// let g = InfiniteGrid::new(1);
     /// ```
+    #[must_use]
     pub fn new(parallel: usize) -> InfiniteGrid {
         let mut past_positions = HashSet::new();
         past_positions.insert(Position::new());
@@ -134,6 +135,7 @@ impl InfiniteGrid {
     /// Returns the number of unique positions visited.
     ///
     /// The starting location counts as one visited position.
+    #[must_use]
     pub fn visited(&self) -> usize {
         self.past_positions.len()
     }

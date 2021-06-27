@@ -41,13 +41,10 @@ fn test_wrapping_paper_needed_input_file() {
     let presents: Vec<Present> = contents
         .lines()
         .map(|s| Present::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .collect();
 
-    let wrapping_paper_needed: u32 = presents
-        .iter()
-        .map(|present| present.wrapping_paper_needed())
-        .sum();
+    let wrapping_paper_needed: u32 = presents.iter().map(Present::wrapping_paper_needed).sum();
 
     assert_eq!(wrapping_paper_needed, 1586300);
 }
@@ -60,10 +57,10 @@ fn test_ribbon_needed_input_file() {
     let presents: Vec<Present> = contents
         .lines()
         .map(|s| Present::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .collect();
 
-    let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
+    let ribbon_needed: u32 = presents.iter().map(Present::ribbon_needed).sum();
 
     assert_eq!(ribbon_needed, 3737498);
 }

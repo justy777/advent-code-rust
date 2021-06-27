@@ -16,7 +16,7 @@ fn move_position_benchmark(c: &mut Criterion) {
                 .chars()
                 .for_each(|c| grid.move_position(black_box(c)));
 
-            grid.visited();
+            let _ = grid.visited();
         });
     });
     c.bench_function("year_2015::day_03 - move_position 1/file", |b| {
@@ -27,7 +27,7 @@ fn move_position_benchmark(c: &mut Criterion) {
                 .chars()
                 .for_each(|c| grid.move_position(black_box(c)));
 
-            grid.visited();
+            let _ = grid.visited();
         });
     });
     c.bench_function("year_2015::day_03 - move_position 2/file", |b| {
@@ -38,7 +38,7 @@ fn move_position_benchmark(c: &mut Criterion) {
                 .chars()
                 .for_each(|c| grid.move_position(black_box(c)));
 
-            grid.visited();
+            let _ = grid.visited();
         });
     });
 }

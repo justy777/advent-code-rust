@@ -10,8 +10,13 @@ fn reformat_string_benchmark(c: &mut Criterion) {
 
     c.bench_function("year_2015::day_08 - reformat_string sample", |b| {
         b.iter(|| {
-            let list = vec![r#""""#, r#""abc""#, r#""aaa\"aaa""#, r#""\x27""#];
-            let _: usize = list.iter().map(|s| s.len()).sum();
+            let list = vec![
+                String::from(r#""""#),
+                String::from(r#""abc""#),
+                String::from(r#""aaa\"aaa""#),
+                String::from(r#""\x27""#),
+            ];
+            let _: usize = list.iter().map(String::len).sum();
             let _: usize = list
                 .iter()
                 .map(|s| reformat_string(black_box(s)).len())
@@ -20,7 +25,7 @@ fn reformat_string_benchmark(c: &mut Criterion) {
     });
     c.bench_function("year_2015::day_08 - reformat_string file", |b| {
         b.iter(|| {
-            let _: usize = contents.lines().map(|s| s.len()).sum();
+            let _: usize = contents.lines().map(str::len).sum();
             let _: usize = contents
                 .lines()
                 .map(|s| reformat_string(black_box(s)).len())
@@ -35,14 +40,19 @@ fn escape_string_benchmark(c: &mut Criterion) {
 
     c.bench_function("year_2015::day_08 - escape_string sample", |b| {
         b.iter(|| {
-            let list = vec![r#""""#, r#""abc""#, r#""aaa\"aaa""#, r#""\x27""#];
-            let _: usize = list.iter().map(|s| s.len()).sum();
+            let list = vec![
+                String::from(r#""""#),
+                String::from(r#""abc""#),
+                String::from(r#""aaa\"aaa""#),
+                String::from(r#""\x27""#),
+            ];
+            let _: usize = list.iter().map(String::len).sum();
             let _: usize = list.iter().map(|s| escape_string(black_box(s)).len()).sum();
         });
     });
     c.bench_function("year_2015::day_08 - escape_string file", |b| {
         b.iter(|| {
-            let _: usize = contents.lines().map(|s| s.len()).sum();
+            let _: usize = contents.lines().map(str::len).sum();
             let _: usize = contents
                 .lines()
                 .map(|s| escape_string(black_box(s)).len())

@@ -41,7 +41,15 @@ impl FromStr for Reindeer {
     }
 }
 
+/// # Panics
+///
+/// Will panic if reindeer is empty
+#[must_use]
 pub fn distance_winning_reindeer_traveled(reindeer: &[Reindeer], race_time: u32) -> u32 {
+    if reindeer.is_empty() {
+        panic!("Illegal argument - reindeer slice cannot be empty")
+    }
+
     let mut distances = Vec::new();
     for racer in reindeer {
         let mut time_left = race_time;
@@ -95,7 +103,15 @@ impl Default for Racer {
     }
 }
 
+#[must_use]
+/// # Panics
+///
+/// Will panic if reindeer is empty
 pub fn points_awarded_winning_reindeer(reindeer: &[Reindeer], race_time: u32) -> u32 {
+    if reindeer.is_empty() {
+        panic!("illegal argument - reindeer slice cannot be empty");
+    }
+
     let mut racers: HashMap<String, Racer> = HashMap::new();
     for _ in 0..race_time {
         for deer in reindeer {
@@ -119,11 +135,12 @@ pub fn points_awarded_winning_reindeer(reindeer: &[Reindeer], race_time: u32) ->
                 }
             }
         }
-        let lead_distance = racers.values().map(|racer| racer.distance).max().unwrap();
-        racers
-            .values_mut()
-            .filter(|racer| racer.distance == lead_distance)
-            .for_each(|racer| racer.points += 1);
+        if let Some(lead_distance) = racers.values().map(|racer| racer.distance).max() {
+            racers
+                .values_mut()
+                .filter(|racer| racer.distance == lead_distance)
+                .for_each(|racer| racer.points += 1);
+        }
     }
     racers.values().map(|racer| racer.points).max().unwrap()
 }

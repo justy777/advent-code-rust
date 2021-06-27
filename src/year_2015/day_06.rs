@@ -123,6 +123,7 @@ impl<T: Bulb> LightGrid<T> {
     ///
     /// let mut grid: LightGrid<SimpleBulb> = LightGrid::new();
     /// ```
+    #[must_use]
     pub fn new() -> LightGrid<T> {
         LightGrid {
             lights: vec![vec![T::default(); GRID_CAPACITY]; GRID_CAPACITY],
@@ -142,10 +143,11 @@ impl<T: Bulb> LightGrid<T> {
     ///     start_point: Point { x: 0, y: 0 },
     ///     end_point: Point { x: 0, y: 999 }
     /// };
-    /// grid.apply_operation(instruction);
+    /// grid.apply_operation(&instruction);
     /// let count = grid.total_brightness();
     /// assert_eq!(count, 1000);
     /// ```
+    #[must_use]
     pub fn total_brightness(&self) -> i32 {
         let mut count = 0;
         for x in 0..GRID_CAPACITY {
@@ -158,7 +160,7 @@ impl<T: Bulb> LightGrid<T> {
 
     // TODO: Update with happy path doc tests
     /// Applies the provided instruction to the lights in the grid.
-    pub fn apply_operation(&mut self, instruction: LightInstruction) {
+    pub fn apply_operation(&mut self, instruction: &LightInstruction) {
         for x in instruction.start_point.x..=instruction.end_point.x {
             for y in instruction.start_point.y..=instruction.end_point.y {
                 match instruction.operation {

@@ -23,7 +23,7 @@ fn shortest_path_benchmark(c: &mut Criterion) {
                 graph.add_edge(black_box(edge));
             }
 
-            graph.shortest_path();
+            let _ = graph.shortest_path();
         });
     });
     c.bench_function("year_2015::day_09 - shortest_path file", |b| {
@@ -32,10 +32,10 @@ fn shortest_path_benchmark(c: &mut Criterion) {
             contents
                 .lines()
                 .map(|s| Edge::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
+                .filter_map(Result::ok)
                 .for_each(|edge| graph.add_edge(black_box(edge)));
 
-            graph.shortest_path();
+            let _ = graph.shortest_path();
         });
     });
 }
@@ -58,7 +58,7 @@ fn longest_path_benchmark(c: &mut Criterion) {
                 graph.add_edge(black_box(edge));
             }
 
-            graph.longest_path();
+            let _ = graph.longest_path();
         });
     });
     c.bench_function("year_2015::day_09 - longest_path file", |b| {
@@ -67,10 +67,10 @@ fn longest_path_benchmark(c: &mut Criterion) {
             contents
                 .lines()
                 .map(|s| Edge::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
+                .filter_map(Result::ok)
                 .for_each(|edge| graph.add_edge(black_box(edge)));
 
-            graph.longest_path();
+            let _ = graph.longest_path();
         });
     });
 }

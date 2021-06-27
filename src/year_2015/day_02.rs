@@ -42,6 +42,7 @@ impl Present {
     /// let ribbon = present.wrapping_paper_needed();
     /// assert_eq!(ribbon, 43);
     /// ```
+    #[must_use]
     pub fn wrapping_paper_needed(&self) -> u32 {
         let area_1 = self.length * self.width;
         let area_2 = self.width * self.height;
@@ -73,6 +74,7 @@ impl Present {
     /// let ribbon = present.ribbon_needed();
     /// assert_eq!(ribbon, 14);
     /// ```
+    #[must_use]
     pub fn ribbon_needed(&self) -> u32 {
         let needed_for_bow = self.length * self.width * self.height;
         let max = self.length.max(self.width).max(self.height);

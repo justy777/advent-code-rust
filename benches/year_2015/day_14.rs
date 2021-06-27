@@ -29,7 +29,7 @@ fn distance_winning_reindeer_traveled_benchmark(c: &mut Criterion) {
                     reindeer.push(dancer);
                 };
 
-                distance_winning_reindeer_traveled(black_box(&reindeer), black_box(1000));
+                let _ = distance_winning_reindeer_traveled(black_box(&reindeer), black_box(1000));
             });
         },
     );
@@ -40,10 +40,10 @@ fn distance_winning_reindeer_traveled_benchmark(c: &mut Criterion) {
                 let reindeer: Vec<Reindeer> = contents
                     .lines()
                     .map(|s| Reindeer::from_str(black_box(s)))
-                    .filter_map(|result| result.ok())
+                    .filter_map(Result::ok)
                     .collect();
 
-                distance_winning_reindeer_traveled(black_box(&reindeer), black_box(2503));
+                let _ = distance_winning_reindeer_traveled(black_box(&reindeer), black_box(2503));
             });
         },
     );
@@ -71,7 +71,7 @@ fn points_awarded_winning_reindeer_benchmark(c: &mut Criterion) {
                     reindeer.push(dancer);
                 };
 
-                points_awarded_winning_reindeer(black_box(&reindeer), black_box(1000));
+                let _ = points_awarded_winning_reindeer(black_box(&reindeer), black_box(1000));
             });
         },
     );
@@ -82,10 +82,10 @@ fn points_awarded_winning_reindeer_benchmark(c: &mut Criterion) {
                 let reindeer: Vec<Reindeer> = contents
                     .lines()
                     .map(|s| Reindeer::from_str(black_box(s)))
-                    .filter_map(|result| result.ok())
+                    .filter_map(Result::ok)
                     .collect();
 
-                points_awarded_winning_reindeer(black_box(&reindeer), black_box(2503));
+                let _ = points_awarded_winning_reindeer(black_box(&reindeer), black_box(2503));
             });
         },
     );

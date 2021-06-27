@@ -13,7 +13,7 @@ fn test_happiest_table() {
     contents
         .lines()
         .map(|s| SeatingPreference::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|preference| plan.add_preference(preference));
 
     let max = plan.happiest_table();
@@ -29,7 +29,7 @@ fn test_happiest_table_input_file() {
     contents
         .lines()
         .map(|s| SeatingPreference::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|preference| plan.add_preference(preference));
 
     let max = plan.happiest_table();
@@ -45,7 +45,7 @@ fn test_happiest_table_input_file_and_you() {
     contents
         .lines()
         .map(|s| SeatingPreference::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|preference| plan.add_preference(preference));
 
     for guest in plan.guests.clone() {
@@ -68,4 +68,11 @@ fn test_happiest_table_input_file_and_you() {
 
     let max = plan.happiest_table();
     assert_eq!(max, 640)
+}
+
+#[test]
+fn test_happiest_table_empty() {
+    let plan = SeatingPlan::new();
+    let value = plan.happiest_table();
+    assert_eq!(value, 0);
 }

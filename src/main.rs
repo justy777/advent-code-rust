@@ -1,7 +1,7 @@
 use std::fs;
 use std::str::FromStr;
 
-use advent_of_code::year_2015::day_01::{floor, position};
+use advent_of_code::year_2015::day_01::{floor, position_to_floor};
 use advent_of_code::year_2015::day_02::Present;
 use advent_of_code::year_2015::day_03::InfiniteGrid;
 use advent_of_code::year_2015::day_04::find_number;
@@ -43,7 +43,7 @@ fn run_2015_01() {
     let f = floor(&contents);
     println!("The instructions take Santa to floor {}.", f);
 
-    let p = position(&contents, -1).unwrap();
+    let p = position_to_floor(&contents, -1).unwrap();
     println!("The Santa enters the basement at position {}.", p);
 }
 
@@ -56,20 +56,17 @@ fn run_2015_02() {
     let presents: Vec<Present> = contents
         .lines()
         .map(|s| Present::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .collect();
 
-    let wrapping_paper_needed: u32 = presents
-        .iter()
-        .map(|present| present.wrapping_paper_needed())
-        .sum();
+    let wrapping_paper_needed: u32 = presents.iter().map(Present::wrapping_paper_needed).sum();
 
     println!(
         "The elves need {} square feet of wrapping paper.",
         wrapping_paper_needed
     );
 
-    let ribbon_needed: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
+    let ribbon_needed: u32 = presents.iter().map(Present::ribbon_needed).sum();
 
     println!("The elves need {} feet of ribbon.", ribbon_needed);
 }
@@ -103,16 +100,16 @@ fn run_2015_04() {
     println!("Advent of Code - Year 2015 Day 4: The Ideal Stocking Stuffer");
     let key = "iwrupvqb";
 
-    let number = find_number(key.as_bytes(), 5).unwrap();
+    let first_number = find_number(key.as_bytes(), 5).unwrap();
     println!(
         "The secret key is {}{} for an MD5 hash with five leading zeroes.",
-        key, number
+        key, first_number
     );
 
-    let number = find_number(key.as_bytes(), 6).unwrap();
+    let second_number = find_number(key.as_bytes(), 6).unwrap();
     println!(
         "The secret key is {}{} for an MD5 hash with six leading zeroes.",
-        key, number
+        key, second_number
     );
 }
 
@@ -145,8 +142,8 @@ fn run_2015_06() {
     contents
         .lines()
         .map(|s| LightInstruction::from_str(s))
-        .filter_map(|result| result.ok())
-        .for_each(|instruction| grid.apply_operation(instruction));
+        .filter_map(Result::ok)
+        .for_each(|instruction| grid.apply_operation(&instruction));
     let count = grid.total_brightness();
     println!("There are {} lights lit.", count);
 
@@ -154,8 +151,8 @@ fn run_2015_06() {
     contents
         .lines()
         .map(|s| LightInstruction::from_str(s))
-        .filter_map(|result| result.ok())
-        .for_each(|instruction| grid.apply_operation(instruction));
+        .filter_map(Result::ok)
+        .for_each(|instruction| grid.apply_operation(&instruction));
     let brightness = grid.total_brightness();
     println!("The total brightness is {}.", brightness);
 }
@@ -169,7 +166,7 @@ fn run_2015_07() {
     contents
         .lines()
         .map(|s| CircuitInstruction::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|instruction| circuit.add_instruction(instruction));
     circuit.resolve();
 
@@ -182,8 +179,8 @@ fn run_2015_07() {
     };
     circuit.resolve();
 
-    let signal_a = circuit.signal("a").unwrap();
-    println!("The signal {} is provided to wire 'a'.", signal_a);
+    let new_signal_a = circuit.signal("a").unwrap();
+    println!("The signal {} is provided to wire 'a'.", new_signal_a);
 }
 
 fn run_2015_08() {
@@ -191,14 +188,14 @@ fn run_2015_08() {
     let contents =
         fs::read_to_string("input/2015/day-08.txt").expect("Failed to read file to string.");
 
-    let before: usize = contents.lines().map(|s| s.len()).sum();
-    let after: usize = contents.lines().map(|s| reformat_string(s).len()).sum();
+    let before: usize = contents.lines().map(str::len).sum();
+    let after_reformat: usize = contents.lines().map(|s| reformat_string(s).len()).sum();
 
-    println!("The difference between the string literals characters and the string value characters in memory is {} characters.", before - after);
+    println!("The difference between the string literals characters and the string value characters in memory is {} characters.", before - after_reformat);
 
-    let after: usize = contents.lines().map(|s| escape_string(s).len()).sum();
+    let after_escape: usize = contents.lines().map(|s| escape_string(s).len()).sum();
 
-    println!("The difference between the newly encoded string characters and the string literals characters is {} characters.", after - before);
+    println!("The difference between the newly encoded string characters and the string literals characters is {} characters.", after_escape - before);
 }
 
 fn run_2015_09() {
@@ -210,7 +207,7 @@ fn run_2015_09() {
     contents
         .lines()
         .map(|s| Edge::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|edge| graph.add_edge(edge));
 
     let min = graph.shortest_path();
@@ -228,24 +225,24 @@ fn run_2015_10() {
         input = look_and_say(&input);
     }
 
-    let length = input.len();
-    println!("The length of the result is {}.", length);
+    let length_after_40 = input.len();
+    println!("The length of the result is {}.", length_after_40);
 
     let mut input = String::from("1113122113");
     for _ in 0..50 {
         input = look_and_say(&input);
     }
 
-    let length = input.len();
-    println!("The length of the new result is {}.", length);
+    let length_after_50 = input.len();
+    println!("The length of the new result is {}.", length_after_50);
 }
 
 fn run_2015_11() {
     println!("Advent of Code 2015 - Day 11");
-    let new_password = next_password("cqjxjnds");
+    let new_password = next_password("cqjxjnds").unwrap();
     println!("His next password should be {}.", new_password);
 
-    let new_password = next_password("cqjxxyzz");
+    let new_password = next_password("cqjxxyzz").unwrap();
     println!("The next one is {}.", new_password);
 }
 
@@ -254,12 +251,18 @@ fn run_2015_12() {
     let contents =
         fs::read_to_string("input/2015/day-12.txt").expect("Failed to read file to string.");
 
-    let sum = sum_numbers_in_str(&contents);
-    println!("The sum of all the numbers in the document is {}.", sum);
+    let number_sum = sum_numbers_in_str(&contents);
+    println!(
+        "The sum of all the numbers in the document is {}.",
+        number_sum
+    );
 
     let value = serde_json::from_str(&contents).unwrap();
-    let sum = sum_value(&value);
-    println!("The sum of the numbers without red objects is {}.", sum);
+    let value_sum = sum_value(&value);
+    println!(
+        "The sum of the numbers without red objects is {}.",
+        value_sum
+    );
 }
 
 fn run_2015_13() {
@@ -271,7 +274,7 @@ fn run_2015_13() {
     contents
         .lines()
         .map(|s| SeatingPreference::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|preference| plan.add_preference(preference));
 
     let max = plan.happiest_table();
@@ -296,8 +299,8 @@ fn run_2015_13() {
         plan.add_preference(preference);
     }
 
-    let max = plan.happiest_table();
-    println!("The total change in happiness for the optimal seating arrangement that actually includes yourself is {}", max);
+    let new_max = plan.happiest_table();
+    println!("The total change in happiness for the optimal seating arrangement that actually includes yourself is {}", new_max);
 }
 
 fn run_2015_14() {
@@ -308,12 +311,12 @@ fn run_2015_14() {
     let reindeer: Vec<Reindeer> = contents
         .lines()
         .map(|s| Reindeer::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .collect();
 
-    let max = distance_winning_reindeer_traveled(&reindeer, 2503);
-    println!("The winning reindeer has travelled {} km.", max);
+    let max_distance = distance_winning_reindeer_traveled(&reindeer, 2503);
+    println!("The winning reindeer has travelled {} km.", max_distance);
 
-    let max = points_awarded_winning_reindeer(&reindeer, 2503);
-    println!("The winning reindeer has {} points.", max);
+    let max_points = points_awarded_winning_reindeer(&reindeer, 2503);
+    println!("The winning reindeer has {} points.", max_points);
 }

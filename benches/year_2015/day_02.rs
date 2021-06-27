@@ -11,7 +11,7 @@ fn wrapping_benchmark(c: &mut Criterion) {
     c.bench_function("year_2015::day_02 - wrapping paper/0x0x0", |b| {
         b.iter(|| {
             if let Ok(present) = Present::from_str(black_box("0x0x0")) {
-                present.wrapping_paper_needed();
+                let _ = present.wrapping_paper_needed();
             }
         });
     });
@@ -20,13 +20,10 @@ fn wrapping_benchmark(c: &mut Criterion) {
             let presents: Vec<Present> = contents
                 .lines()
                 .map(|s| Present::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
+                .filter_map(Result::ok)
                 .collect();
 
-            let _: u32 = presents
-                .iter()
-                .map(|present| present.wrapping_paper_needed())
-                .sum();
+            let _: u32 = presents.iter().map(Present::wrapping_paper_needed).sum();
         });
     });
 }
@@ -37,7 +34,7 @@ fn ribbon_benchmark(c: &mut Criterion) {
     c.bench_function("year_2015::day_02 - ribbon/0x0x0", |b| {
         b.iter(|| {
             if let Ok(present) = Present::from_str(black_box("0x0x0")) {
-                present.ribbon_needed();
+                let _ = present.ribbon_needed();
             }
         });
     });
@@ -46,10 +43,10 @@ fn ribbon_benchmark(c: &mut Criterion) {
             let presents: Vec<Present> = contents
                 .lines()
                 .map(|s| Present::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
+                .filter_map(Result::ok)
                 .collect();
 
-            let _: u32 = presents.iter().map(|present| present.ribbon_needed()).sum();
+            let _: u32 = presents.iter().map(Present::ribbon_needed).sum();
         });
     });
 }

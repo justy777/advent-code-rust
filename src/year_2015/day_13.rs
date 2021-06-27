@@ -14,6 +14,7 @@ pub struct SeatingPlan {
 }
 
 impl SeatingPlan {
+    #[must_use]
     pub fn new() -> SeatingPlan {
         SeatingPlan {
             guests: HashSet::new(),
@@ -27,11 +28,12 @@ impl SeatingPlan {
         self.preferences.insert(key, preference.happiness);
     }
 
-    fn happiness(&self, guest: &str, neighbour: &str) -> &i32 {
+    fn happiness(&self, guest: &str, neighbour: &str) -> i32 {
         let key = [String::from(guest), String::from(neighbour)];
-        self.preferences.get(&key).unwrap()
+        self.preferences.get(&key).unwrap().to_owned()
     }
 
+    #[must_use]
     pub fn happiest_table(&self) -> i32 {
         let permutations: Vec<Vec<&String>> =
             self.guests.iter().permutations(self.guests.len()).collect();

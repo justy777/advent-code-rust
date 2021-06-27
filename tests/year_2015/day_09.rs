@@ -22,6 +22,13 @@ fn test_shortest_path() {
 }
 
 #[test]
+#[should_panic]
+fn test_empty_shortest_path() {
+    let graph = Graph::new();
+    let _ = graph.shortest_path();
+}
+
+#[test]
 fn test_longest_path() {
     let mut graph = Graph::new();
 
@@ -40,6 +47,13 @@ fn test_longest_path() {
 }
 
 #[test]
+#[should_panic]
+fn test_empty_longest_path() {
+    let graph = Graph::new();
+    let _ = graph.longest_path();
+}
+
+#[test]
 fn test_shortest_path_input_file() {
     let contents =
         fs::read_to_string("input/2015/day-09.txt").expect("Failed to read file to string.");
@@ -48,7 +62,7 @@ fn test_shortest_path_input_file() {
     contents
         .lines()
         .map(|s| Edge::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|edge| graph.add_edge(edge));
 
     let min = graph.shortest_path();
@@ -64,7 +78,7 @@ fn test_longest_path_input_file() {
     contents
         .lines()
         .map(|s| Edge::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|edge| graph.add_edge(edge));
 
     let max = graph.longest_path();

@@ -1,4 +1,6 @@
-use std::str;
+use std::error::Error;
+use std::fmt::{Display, Formatter};
+use std::{fmt, str};
 
 fn rotate_letters(letters: &mut [u8]) {
     let mut first = true;
@@ -64,16 +66,42 @@ fn is_password(s: &[u8]) -> bool {
     contains_increasing_straight_of_three(s) && !contains_forbidden_char(s) && contains_two_pairs(s)
 }
 
-pub fn next_password(old_password: &str) -> String {
+/// Error type used when calling `next_password`.
+#[derive(Debug)]
+pub struct NextPasswordError {
+    pub(super) _priv: (),
+}
+
+impl Error for NextPasswordError {}
+
+impl Display for NextPasswordError {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        "provided string was not in format '[a-z]{4,}'".fmt(f)
+    }
+}
+
+/// # Errors
+///
+/// Will result in an error if `old_password` is less than 4 characters, or if `old_password` contains any non-alphabetic characters
+pub fn next_password(old_password: &str) -> Result<String, NextPasswordError> {
+    if old_password.len() < 4 {
+        return Result::Err(NextPasswordError { _priv: () });
+    }
+
+    if !old_password.chars().all(char::is_alphabetic) {
+        return Result::Err(NextPasswordError { _priv: () });
+    }
+
     let mut password = Vec::from(old_password);
     if let Some(start_position) = password.iter().position(|c| "iol".as_bytes().contains(c)) {
         rotate_letters(&mut password[start_position..]);
     };
 
     while !is_password(&password) || old_password.as_bytes() == password.as_slice() {
-        let position = password.iter().rposition(|letter| letter != &b'z').unwrap();
-        rotate_letters(&mut password[position..]);
+        if let Some(position) = password.iter().rposition(|letter| letter != &b'z') {
+            rotate_letters(&mut password[position..]);
+        }
     }
 
-    String::from_utf8(password).unwrap()
+    unsafe { Result::Ok(String::from_utf8_unchecked(password)) }
 }

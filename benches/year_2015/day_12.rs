@@ -20,7 +20,7 @@ fn sum_value_benchmark(c: &mut Criterion) {
     c.bench_function("year_2015::day_12 - sum_value file", |b| {
         b.iter(|| {
             let value = serde_json::from_str(&contents).unwrap();
-            sum_value(black_box(&value));
+            let _ = sum_value(black_box(&value));
         });
     });
 }

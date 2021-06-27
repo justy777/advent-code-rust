@@ -15,9 +15,9 @@ fn apply_operation_benchmark(c: &mut Criterion) {
             contents
                 .lines()
                 .map(|s| LightInstruction::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
-                .for_each(|instruction| grid.apply_operation(black_box(instruction)));
-            grid.total_brightness();
+                .filter_map(Result::ok)
+                .for_each(|instruction| grid.apply_operation(black_box(&instruction)));
+            let _ = grid.total_brightness();
         });
     });
 
@@ -27,9 +27,9 @@ fn apply_operation_benchmark(c: &mut Criterion) {
             contents
                 .lines()
                 .map(|s| LightInstruction::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
-                .for_each(|instruction| grid.apply_operation(black_box(instruction)));
-            grid.total_brightness();
+                .filter_map(Result::ok)
+                .for_each(|instruction| grid.apply_operation(black_box(&instruction)));
+            let _ = grid.total_brightness();
         });
     });
 }

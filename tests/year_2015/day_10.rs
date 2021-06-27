@@ -39,3 +39,9 @@ fn test_look_and_say_input_50_times() {
     let length = input.len();
     assert_eq!(length, 5103798);
 }
+
+#[test]
+fn test_look_and_say_letters_and_symbols() {
+    let value = look_and_say(&String::from("%%^&hfh"));
+    assert_eq!(value, "2%1^1&1h1f1h");
+}

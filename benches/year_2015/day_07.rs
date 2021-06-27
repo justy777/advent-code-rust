@@ -15,7 +15,7 @@ fn resolve_benchmark(c: &mut Criterion) {
             contents
                 .lines()
                 .map(|s| CircuitInstruction::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
+                .filter_map(Result::ok)
                 .for_each(|instruction| circuit.add_instruction(black_box(instruction)));
             circuit.resolve();
         });
@@ -30,7 +30,7 @@ fn resolve_benchmark(c: &mut Criterion) {
             contents
                 .lines()
                 .map(|s| CircuitInstruction::from_str(black_box(s)))
-                .filter_map(|result| result.ok())
+                .filter_map(Result::ok)
                 .for_each(|instruction| circuit.add_instruction(black_box(instruction)));
             circuit.resolve();
         });

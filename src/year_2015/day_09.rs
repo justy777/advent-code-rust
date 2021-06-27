@@ -13,6 +13,7 @@ pub struct Graph {
 }
 
 impl Graph {
+    #[must_use]
     pub fn new() -> Graph {
         Graph {
             vertices: HashSet::new(),
@@ -28,10 +29,10 @@ impl Graph {
         self.edges.insert(edge_key, edge.weight);
     }
 
-    fn weight(&self, origin: &str, destination: &str) -> &u32 {
+    fn weight(&self, origin: &str, destination: &str) -> u32 {
         let mut edge_key = [String::from(origin), String::from(destination)];
         edge_key.sort();
-        self.edges.get(&edge_key).unwrap()
+        self.edges.get(&edge_key).unwrap().to_owned()
     }
 
     fn all_paths(&self) -> Vec<u32> {
@@ -52,11 +53,23 @@ impl Graph {
         scores
     }
 
+    /// Finds the shortest path and returns the total score for that path
+    ///
+    /// # Panics
+    ///
+    /// Will panic if `Graph` is empty
+    #[must_use]
     pub fn shortest_path(&self) -> u32 {
         let scores = self.all_paths();
         scores.iter().min().unwrap().to_owned()
     }
 
+    /// Finds the longest path and returns the total score for that path
+    ///
+    /// # Panics
+    ///
+    /// Will panic if `Graph` is empty
+    #[must_use]
     pub fn longest_path(&self) -> u32 {
         let scores = self.all_paths();
         scores.iter().max().unwrap().to_owned()

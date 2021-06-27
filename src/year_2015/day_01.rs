@@ -3,7 +3,7 @@
 Santa is trying to deliver presents in a large apartment building, but he can't find the right floor - the directions he got are a little confusing.
 */
 
-/// InfiniteBuilding holds state for the current floor, and position.
+/// `InfiniteBuilding` holds state for the current floor, and position.
 ///
 /// The apartment building is very tall, and the basement is very deep; you will never find the top or bottom floors.
 #[derive(Debug)]
@@ -23,7 +23,7 @@ impl InfiniteBuilding {
         }
     }
 
-    fn apply(&mut self, c: &u8) {
+    fn apply(&mut self, c: u8) {
         match c {
             b'(' => {
                 self.floor += 1;
@@ -74,9 +74,10 @@ impl InfiniteBuilding {
 /// let f = floor(b")())())");
 /// assert_eq!(f, -3);
 /// ```
+#[must_use]
 pub fn floor(input: &[u8]) -> i32 {
     let mut building = InfiniteBuilding::new();
-    input.iter().for_each(|c| building.apply(c));
+    input.iter().for_each(|c| building.apply(*c));
     building.floor
 }
 
@@ -88,22 +89,23 @@ pub fn floor(input: &[u8]) -> i32 {
 /// # Examples
 ///
 /// ```
-/// use advent_of_code::year_2015::day_01::position;
+/// use advent_of_code::year_2015::day_01::position_to_floor;
 ///
-/// let p = position(b")", -1);
+/// let p = position_to_floor(b")", -1);
 /// assert_eq!(p, Some(1));
 ///
-/// let p = position(b"()())", -1);
+/// let p = position_to_floor(b"()())", -1);
 /// assert_eq!(p, Some(5));
 /// ```
-pub fn position(input: &[u8], floor: i32) -> Option<i32> {
+#[must_use]
+pub fn position_to_floor(input: &[u8], floor: i32) -> Option<i32> {
     if floor == 0 {
         return Some(0);
     }
 
     let mut building = InfiniteBuilding::new();
     for c in input.iter() {
-        building.apply(c);
+        building.apply(*c);
         if building.floor == floor {
             return Some(building.position);
         }

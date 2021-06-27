@@ -1,10 +1,10 @@
 /*!
 --- Day 4: The Ideal Stocking Stuffer ---
 
-Santa needs help mining some AdventCoins (similar to bitcoins) to use as gifts for all the economically forward-thinking little girls and boys.
+Santa needs help mining some Advent Coins (similar to bitcoins) to use as gifts for all the economically forward-thinking little girls and boys.
 
 To do this, he needs to find MD5 hashes which, in hexadecimal, start with at least five zeroes.
-To mine AdventCoins, you must find Santa the lowest positive number that produces such a hash.
+To mine Advent Coins, you must find Santa the lowest positive number that produces such a hash.
 */
 
 use crypto::digest::Digest;
@@ -23,6 +23,7 @@ use crypto::md5::Md5;
 /// let number = find_number(b"pqrstuv", 5);
 /// assert_eq!(number, Some(1048970));
 /// ```
+#[must_use]
 pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
     if leading_zeroes > 128 {
         return None;
@@ -48,9 +49,9 @@ pub fn find_number(key: &[u8], leading_zeroes: u8) -> Option<u64> {
         let mut first_bytes = 0;
         for (i, byte) in output.iter().take(leading_bytes as usize).enumerate() {
             if !is_even && i == (leading_bytes - 1) as usize {
-                first_bytes += (*byte >> 4) as u64;
+                first_bytes += u64::from(*byte >> 4);
             } else {
-                first_bytes += *byte as u64;
+                first_bytes += u64::from(*byte);
             }
         }
 

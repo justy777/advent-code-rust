@@ -39,6 +39,7 @@ pub struct Circuit {
 }
 
 impl Circuit {
+    #[must_use]
     pub fn new() -> Circuit {
         Circuit {
             wires: HashMap::new(),
@@ -107,6 +108,10 @@ impl FromStr for CircuitInstruction {
             Regex::new(r"^(?P<lhs>\w+|\d+) (?P<operation>AND|OR|LSHIFT|RSHIFT) (?P<rhs>\w+|\d+) -> (?P<wire>\w+)$").unwrap()
         });
 
+        static UNARY: Lazy<Regex> = Lazy::new(|| {
+            Regex::new(r"^(?P<operator>NOT)?\s?(?P<operand>\w+|\d+) -> (?P<wire>\w+)$").unwrap()
+        });
+
         if let Some(caps) = BINARY.captures(s) {
             let caps = CapturesWrapper::new(caps);
             let lhs = Signal::from(caps.as_str("lhs"));
@@ -122,10 +127,6 @@ impl FromStr for CircuitInstruction {
 
             return Ok(CircuitInstruction { wire, output });
         };
-
-        static UNARY: Lazy<Regex> = Lazy::new(|| {
-            Regex::new(r"^(?P<operator>NOT)?\s?(?P<operand>\w+|\d+) -> (?P<wire>\w+)$").unwrap()
-        });
 
         if let Some(caps) = UNARY.captures(s) {
             let caps = CapturesWrapper::new(caps);

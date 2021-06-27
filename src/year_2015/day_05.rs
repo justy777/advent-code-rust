@@ -2,7 +2,7 @@
 --- Day 5: Doesn't He Have Intern-Elves For This? ---
 
 Santa needs help figuring out which strings in his text file are naughty or nice.
-*/
+ */
 
 use once_cell::sync::Lazy;
 
@@ -34,11 +34,12 @@ fn contains_double_letter(s: &[u8]) -> bool {
 ///
 /// The forbidden strings are `ab`, `cd`, `pq`, and `xy`.
 fn contains_forbidden_str(s: &str) -> bool {
+    static FORBIDDEN_STRINGS: Lazy<[&'static str; 4]> = Lazy::new(|| ["ab", "cd", "pq", "xy"]);
+
     if s.len() < 2 {
         return false;
     }
 
-    static FORBIDDEN_STRINGS: Lazy<[&'static str; 4]> = Lazy::new(|| ["ab", "cd", "pq", "xy"]);
     FORBIDDEN_STRINGS.iter().any(|pat| s.contains(pat))
 }
 
@@ -74,6 +75,7 @@ fn contains_forbidden_str(s: &str) -> bool {
 /// let is_nice = is_nice_word("dvszwmarrgswjxmb");
 /// assert!(!is_nice);
 /// ```
+#[must_use]
 pub fn is_nice_word(s: &str) -> bool {
     count_vowels(s.as_ref()) >= 3
         && contains_double_letter(s.as_ref())
@@ -139,6 +141,7 @@ fn contains_letter_that_repeats_with_letter_between(s: &[u8]) -> bool {
 /// let is_nice = is_nice_word2("ieodomkazucvgmuy");
 /// assert!(!is_nice);
 /// ```
+#[must_use]
 pub fn is_nice_word2(s: &str) -> bool {
     contains_pair_of_letters_twice(s.as_ref())
         && contains_letter_that_repeats_with_letter_between(s.as_ref())

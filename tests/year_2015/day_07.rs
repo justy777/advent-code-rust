@@ -12,18 +12,18 @@ fn test_small_circuit() {
     contents
         .lines()
         .map(|s| CircuitInstruction::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|instruction| circuit.add_instruction(instruction));
     circuit.resolve();
 
-    assert_eq!(circuit.signal("d").unwrap(), 72);
-    assert_eq!(circuit.signal("e").unwrap(), 507);
-    assert_eq!(circuit.signal("f").unwrap(), 492);
-    assert_eq!(circuit.signal("g").unwrap(), 114);
-    assert_eq!(circuit.signal("h").unwrap(), 65412);
-    assert_eq!(circuit.signal("i").unwrap(), 65079);
-    assert_eq!(circuit.signal("x").unwrap(), 123);
-    assert_eq!(circuit.signal("y").unwrap(), 456);
+    assert_eq!(circuit.signal("d"), Some(72));
+    assert_eq!(circuit.signal("e"), Some(507));
+    assert_eq!(circuit.signal("f"), Some(492));
+    assert_eq!(circuit.signal("g"), Some(114));
+    assert_eq!(circuit.signal("h"), Some(65412));
+    assert_eq!(circuit.signal("i"), Some(65079));
+    assert_eq!(circuit.signal("x"), Some(123));
+    assert_eq!(circuit.signal("y"), Some(456));
 }
 
 #[test]
@@ -35,12 +35,12 @@ fn test_circuit_resolve_input_file() {
     contents
         .lines()
         .map(|s| CircuitInstruction::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|instruction| circuit.add_instruction(instruction));
     circuit.resolve();
 
-    let signal = circuit.signal("a").unwrap();
-    assert_eq!(signal, 16076);
+    let signal = circuit.signal("a");
+    assert_eq!(signal, Some(16076));
 }
 
 #[test]
@@ -52,7 +52,7 @@ fn test_circuit_resolve_input_file_and_extra_instruction() {
     contents
         .lines()
         .map(|s| CircuitInstruction::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .for_each(|instruction| circuit.add_instruction(instruction));
 
     if let Ok(instruction) = CircuitInstruction::from_str("16076 -> b") {
@@ -60,6 +60,6 @@ fn test_circuit_resolve_input_file_and_extra_instruction() {
     };
     circuit.resolve();
 
-    let signal = circuit.signal("a").unwrap();
-    assert_eq!(signal, 2797);
+    let signal = circuit.signal("a");
+    assert_eq!(signal, Some(2797));
 }

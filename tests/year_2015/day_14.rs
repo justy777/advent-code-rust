@@ -53,7 +53,7 @@ fn test_distance_winning_reindeer_traveled_input_file() {
     let reindeer: Vec<Reindeer> = contents
         .lines()
         .map(|s| Reindeer::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .collect();
 
     let max = distance_winning_reindeer_traveled(&reindeer, 2503);
@@ -68,9 +68,21 @@ fn test_points_awarded_winning_reindeer_input_file() {
     let reindeer: Vec<Reindeer> = contents
         .lines()
         .map(|s| Reindeer::from_str(s))
-        .filter_map(|result| result.ok())
+        .filter_map(Result::ok)
         .collect();
 
     let max = points_awarded_winning_reindeer(&reindeer, 2503);
     assert_eq!(max, 1102);
+}
+
+#[test]
+#[should_panic]
+fn test_distance_winning_reindeer_traveled_empty() {
+    let _ = distance_winning_reindeer_traveled(&Vec::new(), 2503);
+}
+
+#[test]
+#[should_panic]
+fn test_points_awarded_winning_reindeer_empty() {
+    let _ = points_awarded_winning_reindeer(&Vec::new(), 2503);
 }
