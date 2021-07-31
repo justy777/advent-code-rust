@@ -2,7 +2,7 @@ fn get_count(s: &[u8], c: u8) -> usize {
     let mut count = 0;
     for n in s {
         if *n == c {
-            count += 1
+            count += 1;
         } else {
             break;
         }

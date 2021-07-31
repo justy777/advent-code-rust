@@ -47,7 +47,7 @@ impl FromStr for Reindeer {
 #[must_use]
 pub fn distance_winning_reindeer_traveled(reindeer: &[Reindeer], race_time: u32) -> u32 {
     if reindeer.is_empty() {
-        panic!("Illegal argument - reindeer slice cannot be empty")
+        panic!("Illegal argument - reindeer slice cannot be empty");
     }
 
     let mut distances = Vec::new();

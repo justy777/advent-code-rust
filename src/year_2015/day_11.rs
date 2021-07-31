@@ -37,7 +37,7 @@ fn contains_increasing_straight_of_three(s: &[u8]) -> bool {
 }
 
 fn contains_forbidden_char(s: &[u8]) -> bool {
-    s.iter().any(|c| "iol".as_bytes().contains(c))
+    s.iter().any(|c| b"iol".contains(c))
 }
 
 fn contains_two_pairs(s: &[u8]) -> bool {
@@ -93,7 +93,7 @@ pub fn next_password(old_password: &str) -> Result<String, NextPasswordError> {
     }
 
     let mut password = Vec::from(old_password);
-    if let Some(start_position) = password.iter().position(|c| "iol".as_bytes().contains(c)) {
+    if let Some(start_position) = password.iter().position(|c| b"iol".contains(c)) {
         rotate_letters(&mut password[start_position..]);
     };
 

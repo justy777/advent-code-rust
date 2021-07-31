@@ -4,7 +4,7 @@ use std::str::FromStr;
 use regex::{Captures, Match};
 
 /// A wrapper to hide repetitive method calls parsing capture groups.
-pub(crate) struct CapturesWrapper<'t>(Captures<'t>);
+pub struct CapturesWrapper<'t>(Captures<'t>);
 
 impl<'t> CapturesWrapper<'t> {
     /// Constructs a new `CapturesWrapper` with the provided caps.
